@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Profile</title>
+    <link rel="stylesheet" href="../../index.css" />
+  </head>
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center text-black">
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
+      <div class="text-end mb-3">
+        <a
+          href="/"
+          class="inline-flex items-center px-6 py-3 text-base font-medium text-white bg-gradient-to-r from-purple-600 to-blue-500 rounded-full shadow-md hover:from-purple-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 transition-all duration-300 ease-in-out transform hover:scale-105"
+        >
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            ></path>
+          </svg>
+          Back to Home
+        </a>
+      </div>
+      <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Update Profile</h2>
+      <form id="update-profile-form">
+        <div class="mb-6">
+          <label for="fullname" class="block mb-2 text-sm font-medium text-gray-600">Full Name</label>
+          <input type="text" id="fullname" name="fullName" class="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded-md focus:outline-none" />
+        </div>
+        <div class="mb-6">
+          <label class="block mb-2 text-sm font-medium text-gray-600">Profile Picture</label>
+          <div class="flex items-center space-x-4">
+            <img id="profile-preview" src="/public/userIcon.png" alt="Profile Picture" class="w-24 h-24 rounded-full object-cover border" />
+            <div>
+              <label
+                for="profile-picture"
+                class="cursor-pointer bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                Choose New Picture
+              </label>
+              <input type="file" id="profile-picture" name="profile" accept="image/*" class="hidden" />
+            </div>
+          </div>
+        </div>
+        <p id="update-profile-message" class="text-center text-lg mb-2"></p>
+        <div class="mb-6">
+          <button type="submit" disabled id="update-account-btn" class="w-full px-3 py-4 text-white bg-gray-300 rounded-md focus:outline-none focus:bg-indigo-600 cursor-not-allowed">
+            <div class="flex items-center justify-center gap-3">
+              <span id="profile-change-spinner" class="hidden h-5 w-5 border-2 border-white border-t-8 border-t-transparent rounded-full animate-spin"></span>
+              Update Account
+            </div>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- <script>
+      function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const preview = document.getElementById("profile-preview");
+          preview.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+      }
+    </script> -->
+    <script type="module" src="./changeProfileDetail.ts"></script>
+  </body>
+</html>

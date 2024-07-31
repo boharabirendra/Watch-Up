@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../index.css" />
+    <title>Signup</title>
+  </head>
+  <body>
+    <div class="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-purple-100 p-4">
+      <div id="main-container"  class="w-full max-w-2xl p-10 bg-white rounded-xl shadow-2xl">
+        <div class="text-end mb-3">
+          <a
+            href="/"
+            class="inline-flex items-center px-6 py-3 text-base font-medium text-white bg-gradient-to-r from-purple-600 to-blue-500 rounded-full shadow-md hover:from-purple-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 transition-all duration-300 ease-in-out transform hover:scale-105"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+              ></path>
+            </svg>
+            Back to Home
+          </a>
+        </div>
+        <h1 class="text-3xl font-bold mb-8 text-center text-indigo-600">Create Your Account</h1>
+        <form id="signupForm" class="space-y-6">
+          <div>
+            <label for="fullName" class="block text-sm font-medium text-gray-700"> Full Name <span class="text-red-500">*</span> </label>
+            <input
+              id="fullName"
+              type="text"
+              name="fullName"
+              class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition duration-150 ease-in-out"
+              placeholder="John Doe"
+              required
+            />
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700"> Email <span class="text-red-500">*</span> </label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition duration-150 ease-in-out"
+              placeholder="youremail@example.com"
+              required
+            />
+          </div>
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700"> Password <span class="text-red-500">*</span> </label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition duration-150 ease-in-out"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+          <div>
+            <label for="role" class="block text-sm font-medium text-gray-700"> Role <span class="text-red-500">*</span> </label>
+            <select
+              id="role"
+              name="role"
+              class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition duration-150 ease-in-out"
+              required
+            >
+              <option value="">Select a role</option>
+              <option value="VIEWER">VIEWER</option>
+              <option value="CREATOR">CREATOR</option>
+            </select>
+          </div>
+          <div>
+            <label for="profile" class="block text-sm font-medium text-gray-700"> Profile Photo </label>
+            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+              <div class="space-y-1 text-center">
+                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                  <path
+                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <div class="flex text-sm text-gray-600 justify-center">
+                  <label
+                    for="profile"
+                    class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+                  >
+                    <span>Upload a file</span>
+                    <p id="profileFileName" class="mt-1 text-sm text-green-500"></p>
+                    <input id="profile" name="profile" type="file" accept="image/*" class="sr-only" />
+                  </label>
+                </div>
+                <p class="text-xs text-gray-500">PNG, JPG, JPEG up to 5MB</p>
+              </div>
+            </div>
+          </div>
+          <p id="signup-message" class="text-lg text-center hidden mb-3"></p>
+          <div>
+            <button
+              type="submit"
+              class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+            >
+              <div class="flex items-center justify-center gap-3">
+                <span id="signup__spinner" class="hidden h-5 w-5 border-2 border-white border-t-2 border-t-transparent rounded-full animate-spin"></span>
+                Create Account
+              </div>
+            </button>
+          </div>
+          <p class="text-center text-gray-600">
+            Already have an account?
+            <a href="../login/login.html" class="text-indigo-600 hover:text-indigo-800 font-medium">Log in</a>
+          </p>
+        </form>
+      </div>
+    </div>
+    <script type="module" src="./signup.ts"></script>
+  </body>
+</html>

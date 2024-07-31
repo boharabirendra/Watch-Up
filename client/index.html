@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WatchUp</title>
+    <link rel="stylesheet" href="./src/index.css" />
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+  </head>
+  <body class="bg-bodybgcolor text-white max-w-[76%] m-auto my-2">
+    <!-- Navbar -->
+    <nav class="text-white py-2 w-full z-50 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <button id="sidebar-toggle" class="rounded-full hover:bg-gray-800 mr-4">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+            </svg>
+          </button>
+          <a href="/" class="flex items-center">
+            <svg class="w-8 h-8 text-red-500 mr-1" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C.488 3.45.029 5.804 0 12c.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0C23.512 20.55 23.971 18.196 24 12c-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 3.993L9 16z"
+              />
+            </svg>
+            <span class="text-xl font-bold">WatchUp</span>
+          </a>
+        </div>
+        <!-- Search bar -->
+        <div class="hidden sm:flex items-center flex-grow max-w-2xl mx-4">
+          <input id="search" type="text" placeholder="Search" class="w-full px-4 py-2 bg-[#121212] border border-gray-700 rounded-l-full focus:outline-none focus:border-blue-500" />
+          <button class="bg-[#222222] px-6 py-3 rounded-r-full hover:bg-[#313131] transition duration-200">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div class="w-8 h-8 overflow-hidden rounded-full border">
+          <img id="nav-profile" src="/public/userIcon.png" alt="User" />
+        </div>
+      </div>
+    </nav>
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-54 bg-gradient-to-b from-gray-900 to-gray-800 text-white transform -translate-x-full transition-all duration-300 ease-in-out z-50 shadow-2xl">
+      <div class="flex flex-col h-full">
+        <div class="p-5 border-b border-gray-700">
+          <h2 class="text-xl font-bold text-blue-400">WatchUp Menu</h2>
+        </div>
+        <nav class="flex-grow p-5">
+          <ul class="space-y-2">
+            <li id="sidebar-login">
+              <a href="./src/components/login/login.html" class="flex items-center p-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors duration-200 group">
+                <svg class="w-6 h-6 text-gray-500 group-hover:text-blue-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+                <span class="ml-3 text-sm font-medium">Login</span>
+              </a>
+            </li>
+            <li id="sidebar-signup">
+              <a href="./src/components/signup/signup.html" class="flex items-center p-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors duration-200 group">
+                <svg class="w-6 h-6 text-gray-500 group-hover:text-blue-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
+                </svg>
+                <span class="ml-3 text-sm font-medium">Sign Up</span>
+              </a>
+            </li>
+            <li id="sidebar-upload">
+              <a href="./src/components/upload/upload.html" class="flex items-center p-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors duration-200 group">
+                <svg class="w-6 h-6 text-gray-500 group-hover:text-blue-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+                <span class="ml-3 text-sm font-medium">Upload</span>
+              </a>
+            </li>
+            <li id="sidebar-change-password">
+              <a href="./src/components/updateUser/changePassword.html" class="flex items-center p-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  <circle cx="12" cy="16" r="1" />
+                  <path d="M12 16v3" />
+                  <path d="M15 7.5v-1a3 3 0 0 0-6 0v1" />
+                  <path d="M16 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+                  <path d="M16 14l1 1 1-1" />
+                </svg>
+                <span class="ml-3 text-sm font-medium">Change password</span>
+              </a>
+            </li>
+            <li id="sidebar-change-profile">
+              <a href="./src/components/updateUser/changeProfileDetail.html" class="flex items-center p-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+                  <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                  <line x1="9" y1="9" x2="9.01" y2="9" />
+                  <line x1="15" y1="9" x2="15.01" y2="9" />
+                  <path d="M17 3.5v2" />
+                  <path d="M20.5 7h-2" />
+                  <path d="M19.5 3.5l-1.5 1.5" />
+                  <path d="M17 8.5l1.5 1.5" />
+                </svg>
+                <span class="ml-3 text-sm font-medium">Change profile</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <div id="sidebar-logout" class="p-5 border-t border-gray-700">
+          <a href="/" class="flex items-center text-gray-400 hover:text-white transition-colors duration-200">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            <span class="text-sm font-medium">Logout</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div id="overlay" class="fixed inset-0 bg-black opacity-50 hidden z-40"></div>
+    <!-- Video grid container -->
+    <div id="content" class="mt-6">
+      <div>
+        <div id="video-grid" class="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8 mt-4"></div>
+      </div>
+    </div>
+    <!-- Video player -->
+    <div id="video-player" class="flex gap-8 justify-between">
+      <div id="video-player-container" class="basis-3/4">
+        <video id="main-video" class="rounded-md w-full" controls autoplay></video>
+        <div id="video-info-container"></div>
+        <div id="video-comment-container"></div>
+      </div>
+      <div id="suggested-videos" class="flex flex-col gap-6"></div>
+      <!-- Delete modal -->
+      <div id="comment-delete-modal" class="hidden fixed bg-bgdeletemodal px-8 py-5 rounded-md top-[35%] left-[50%] flex gap-4 flex-col z-30">
+        <h3 class="text-gray-200">Delete comment</h3>
+        <p class="text-gray-500 text-sm">Delete your comment permanently?</p>
+        <div class="ml-auto flex gap-6">
+          <button id="cancel-comment-deletion" class="text-blue-600 px-3 py-2 rounded-full hover:bg-blue-300 hover:bg-opacity-10">Cancel</button>
+          <button id="comment-deletion" class="text-red-600 px-3 py-2 rounded-full hover:bg-red-300 hover:bg-opacity-10">Delete</button>
+        </div>
+      </div>
+      <div id="delete-modal-overlay" class="fixed inset-0 bg-black opacity-50 hidden z-20"></div>
+    </div>
+    <script type="module" src="./src/main.ts"></script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  </body>
+</html>
