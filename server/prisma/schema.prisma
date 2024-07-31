@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int           @id @default(autoincrement())
+  fullName      String
+  email         String        @unique
+  password      String
+  profileUrl    String?
+  imagePublicId String?
+  refreshToken  String
+  role          String        @default("VIEWER")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  userVideos    UserVideo[]
+  userComment   UserComment[]
+  userLike      UserLike[]
+
+  @@index([email])
+}
+
+model Video {
+  id            Int           @id @default(autoincrement())
+  title         String
+  description   String
+  playbackUrl   String
+  videoPublicId String        @unique
+  duration      Float
+  views         Int           @default(0)
+  likes         Int           @default(0)
+  thumbnailUrl  String
+  isPublished   Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  userVideos    UserVideo[]
+  userComment   UserComment[]
+  userLike      UserLike[]
+
+  @@index([title])
+}
+
+model UserVideo {
+  id      Int   @id @default(autoincrement())
+  userId  Int
+  videoId Int
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video   Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id          Int           @id @default(autoincrement())
+  text        String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  userComment UserComment[]
+}
+
+model UserComment {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  videoId   Int
+  commentId Int     @unique
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video     Video   @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+}
+
+model UserLike {
+  id      Int   @id @default(autoincrement())
+  userId  Int
+  videoId Int
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video   Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+}
