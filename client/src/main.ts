@@ -38,7 +38,6 @@ class VideoController {
   private init(): void {
     this.renderVideoGrid(this.filter);
     this.loadFromUrl();
-    this.filterVideos();
     window.addEventListener("popstate", () => this.loadFromUrl());
   }
 
