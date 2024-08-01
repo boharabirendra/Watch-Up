@@ -25,6 +25,7 @@ export const getVideos = ({ q, size, page }: GetUserQuery) => {
         contains: q,
         mode: "insensitive",
       },
+      isPublished: true,
     },
     include: {
       userVideos: {
@@ -45,19 +46,27 @@ export const getVideos = ({ q, size, page }: GetUserQuery) => {
   });
 };
 
-export const updateVideoDetail = (
-  { title, description }: updateVideoInfo,
-  id: number
-) => {
-  return prisma.video.update({
-    data: {
-      title,
-      description,
-    },
-    where: {
-      id,
-    },
-  });
+export const updateVideoDetail = ({ title, description }: updateVideoInfo, thumbnailUrl: string, id: number) => {
+  return thumbnailUrl
+    ? prisma.video.update({
+        data: {
+          title,
+          description,
+          thumbnailUrl,
+        },
+        where: {
+          id,
+        },
+      })
+    : prisma.video.update({
+        data: {
+          title,
+          description,
+        },
+        where: {
+          id,
+        },
+      });
 };
 
 export const updateVideoViews = (videoPublicId: string) => {
@@ -118,6 +127,7 @@ export const getSuggestionVideos = (videoPublicId: string) => {
   return prisma.video.findMany({
     where: {
       videoPublicId: { not: videoPublicId },
+      isPublished: true,
     },
     include: {
       userVideos: {
@@ -132,6 +142,56 @@ export const getSuggestionVideos = (videoPublicId: string) => {
           },
         },
       },
+    },
+  });
+};
+export const getMyVideos = async (userId: number) => {
+  return prisma.userVideo
+    .findMany({
+      where: {
+        userId,
+      },
+      include: {
+        video: {
+          include: {
+            userComment: {
+              include: {
+                comment: true,
+              },
+            },
+          },
+        },
+      },
+    })
+    .then((videos) =>
+      videos.map((video) => ({
+        ...video,
+        video: {
+          ...video.video,
+          commentCount: video.video.userComment.length, // Count comments
+        },
+      }))
+    );
+};
+
+export const publishVideo = (id: number) => {
+  return prisma.video.update({
+    data: {
+      isPublished: true,
+    },
+    where: {
+      id,
+    },
+  });
+};
+
+export const unpublishVideo = (id: number) => {
+  return prisma.video.update({
+    data: {
+      isPublished: false,
+    },
+    where: {
+      id,
     },
   });
 };

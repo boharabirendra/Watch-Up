@@ -14,10 +14,10 @@ export const createComment = async (comment: IComment) => {
   }
 };
 
-export const getComments = async (videoId: number) => {
+export const getComments = async (videoId: number, userId: number) => {
   try {
     const comments = await CommentModel.getComments(videoId);
-    if (!comments || !comments.userComment) {
+    if (!comments?.userComment.length) {
       return [];
     }
 
@@ -26,6 +26,7 @@ export const getComments = async (videoId: number) => {
       text: userComment.comment.text,
       createdAt: userComment.comment.createdAt,
       updatedAt: userComment.comment.updatedAt,
+      owner: userComment.user.id === userId && true,
       user: {
         id: userComment.user.id,
         fullName: userComment.user.fullName,

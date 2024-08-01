@@ -2,25 +2,20 @@ import { Router } from "express";
 import { authenticate } from "../middlewares/auth.middleware";
 import * as CommentController from "../controllers/comments.controller";
 import { commentBodyParser } from "../middlewares/multer.middleware";
+import { commentAuthenticator } from "../middlewares/comments.middleware";
 
 const router = Router();
 
-router
-  .route("/create-comment")
-  .post(authenticate, commentBodyParser, CommentController.createComment);
+/**PUT request */
+router.route("/update/:id").put(authenticate, CommentController.updateCommentById);
 
-router
-  .route("/get-comments/:videoId")
-  .get(CommentController.getComments);
+/**DELETE request */
+router.route("/delete/:id").delete(authenticate, CommentController.deleteCommentById);
 
+/**GET request */
+router.route("/get-comments/:videoId").get(commentAuthenticator, CommentController.getComments);
 
-router.route("/delete/:id").delete(
-  authenticate,
-  CommentController.deleteCommentById
-)
+/**POST request */
+router.route("/create-comment").post(authenticate, commentBodyParser, CommentController.createComment);
 
-router.route("/update/:id").put(
-  authenticate,
-  CommentController.updateCommentById
-)
 export default router;

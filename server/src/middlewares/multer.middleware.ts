@@ -50,6 +50,12 @@ export const uploadVideoBodyParser = upload.fields([
   { name: "description", maxCount: 1 },
 ]);
 
+export const updateVideoBodyParser = upload.fields([
+  { name: "thumbnail", maxCount: 1 },
+  { name: "title", maxCount: 1 },
+  { name: "description", maxCount: 1 },
+]);
+
 export const commentBodyParser = upload.fields([
   { name: "text", maxCount: 1 },
   { name: "videoId", maxCount: 1 },

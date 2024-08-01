@@ -11,7 +11,7 @@ import { AuthRequest } from "../interface/auth.interface";
 
 const logger = loggerWithNameSpace("Auth Middleware: ");
 
-export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const commentAuthenticator = (req: AuthRequest, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
   if (!authorization) {
     throw new UnauthenticatedError("Access token required");
@@ -30,6 +30,9 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     next();
   } catch (error) {
     logger.error(error);
-    throw new UnauthenticatedError("Invalid access token");
+    req.user = {
+      id: -1,
+    };
+    next();
   }
 };
