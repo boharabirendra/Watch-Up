@@ -1,13 +1,13 @@
 import { IVideo } from "./interface/videoCard";
 import { getComments } from "./components/comments/comment";
 import { ViewTracker } from "./components/views/viewTracker";
-import { VideoPlayer } from "./components/player/videoPlayer";
+import { VideoPlayer } from "./components/videoplayer/videoPlayer";
 import { VideoInfoCard } from "./components/cards/videoInfoCard";
 import { CommentInfoCard } from "./components/cards/commentInfoCard";
 import { logoutHandler, navbarHandler } from "./components/nav/navbarHandler";
 
 import { fetchVideos, fetchVideoById, fetchSuggestionVideos } from "./components/videos/video";
-import { likesHandler, handleComment, handleCommentDeletion, handleCommentEdit } from "./eventHandler";
+import { likesHandler, handleComment, handleCommentDeletion, handleCommentEdit } from "./mainHandler";
 
 class VideoController {
   private filter: string;
@@ -21,6 +21,7 @@ class VideoController {
   private videoCommentContainerElement: HTMLDivElement;
 
   constructor() {
+    
     this.videoGridElement = document.getElementById("video-grid") as HTMLDivElement;
     this.videoSearchElement = document.getElementById("search") as HTMLInputElement;
     this.mainVideoElement = document.getElementById("main-video") as HTMLVideoElement;
@@ -41,6 +42,8 @@ class VideoController {
     window.addEventListener("popstate", () => this.loadFromUrl());
   }
 
+
+  
   private async renderVideoGrid(filter: string) {
     const videos = await fetchVideos(filter);
     this.videoGridElement.innerHTML = videos;

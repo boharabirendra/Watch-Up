@@ -1,10 +1,8 @@
-import axios from "axios";
-import { BASE_URL } from "./constants/constants";
 import { mustLoginMessage } from "./utils/common";
 import { CommentInfoCard } from "./components/cards/commentInfoCard";
 import { EditTextareaCard } from "./components/cards/editTextAreaCard";
 import { getLikeStatus, updateLikeCount } from "./components/likes/likes";
-import { deleteComment, getComments, updateComment } from "./components/comments/comment";
+import { createComment, deleteComment, getComments, updateComment } from "./components/comments/comment";
 
 /**Comment event section */
 export const handleComment = () => {
@@ -14,29 +12,6 @@ export const handleComment = () => {
   const submitCommentElement = document.getElementById("submit-comment") as HTMLButtonElement;
   const commentMessageElement = document.getElementById("comment-message") as HTMLParagraphElement;
   const commentInputBoxElement = document.getElementById("comment-input-box") as HTMLTextAreaElement;
-
-  const updateSubmitButtonState = () => {
-    const isEmpty = commentInputBoxElement.value.trim() === "";
-    submitCommentElement.disabled = isEmpty;
-    if (isEmpty) {
-      submitCommentElement.classList.remove("bg-blue-800", "hover:bg-blue-600");
-      submitCommentElement.classList.add("bg-gray-400", "text-gray-500", "cursor-not-allowed");
-    } else {
-      submitCommentElement.classList.add("bg-blue-800", "hover:bg-blue-600");
-      submitCommentElement.classList.remove("bg-gray-400", "text-gray-500", "cursor-not-allowed");
-    }
-  };
-
-  commentInputBoxElement.addEventListener("input", () => {
-    addCommentElement.classList.remove("hidden");
-    updateSubmitButtonState();
-  });
-
-  cancelCommentElement.addEventListener("click", () => {
-    addCommentElement.classList.add("hidden");
-    commentInputBoxElement.value = "";
-    updateSubmitButtonState();
-  });
 
   /**Create comment api call */
   submitCommentElement.addEventListener("click", async () => {
@@ -49,13 +24,7 @@ export const handleComment = () => {
     formData.append("text", comment);
     formData.append("videoId", videoId);
     try {
-      await axios.post(`${BASE_URL}/comments/create-comment`, formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
+      await createComment(formData);
       commentMessageElement.classList.add("text-green-500");
       commentMessageElement.innerHTML = "Comment added successfully";
       commentInputBoxElement.value = "";
@@ -76,18 +45,39 @@ export const handleComment = () => {
       }, 4000);
     }
   });
+
+  const updateSubmitButtonState = () => {
+    const isEmpty = commentInputBoxElement.value.trim() === "";
+    submitCommentElement.disabled = isEmpty;
+    if (isEmpty) {
+      submitCommentElement.classList.remove("bg-blue-800", "hover:bg-blue-600");
+      submitCommentElement.classList.add("bg-gray-400", "text-gray-500", "cursor-not-allowed");
+    } else {
+      submitCommentElement.classList.add("bg-blue-800", "hover:bg-blue-600");
+      submitCommentElement.classList.remove("bg-gray-400", "text-gray-500", "cursor-not-allowed");
+    }
+  };
+  commentInputBoxElement.addEventListener("input", () => {
+    addCommentElement.classList.remove("hidden");
+    updateSubmitButtonState();
+  });
+
+  cancelCommentElement.addEventListener("click", () => {
+    addCommentElement.classList.add("hidden");
+    commentInputBoxElement.value = "";
+    updateSubmitButtonState();
+  });
   updateSubmitButtonState();
 };
 
 /**Comment deletion */
 export const handleCommentDeletion = () => {
-
   const commentDeleteModalElement = document.getElementById("comment-delete-modal") as HTMLDivElement;
   const confirmCommentDeleteElement = document.getElementById("comment-deletion") as HTMLButtonElement;
   const deleteCommentOverylayElement = document.getElementById("delete-modal-overlay") as HTMLDivElement;
   const alterCommentContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
   const cancelCommentDeletionElement = document.getElementById("cancel-comment-deletion") as HTMLButtonElement;
-  
+
   alterCommentContainerElement.addEventListener("click", async (event) => {
     const commentItem = (event.target as HTMLElement).closest("#delete-comment");
     if (commentItem) {
@@ -113,9 +103,9 @@ export const handleCommentDeletion = () => {
     toggleDeletionModal();
   });
 
-  deleteCommentOverylayElement.addEventListener("click", ()=>{
+  deleteCommentOverylayElement.addEventListener("click", () => {
     toggleDeletionModal();
-  })
+  });
 
   function toggleDeletionModal() {
     deleteCommentOverylayElement.classList.add("hidden");
@@ -125,7 +115,6 @@ export const handleCommentDeletion = () => {
 
 /**Comment deletion */
 export const handleCommentEdit = () => {
-
   const alterCommentContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
 
   alterCommentContainerElement.addEventListener("click", async (event) => {
@@ -143,7 +132,7 @@ export const handleCommentEdit = () => {
           const cancelCommentEditElement = document.getElementById("edit-cancel-comment") as HTMLButtonElement;
           const commentEditTextAreaElement = document.getElementById("edit-comment-input-box") as HTMLTextAreaElement;
           commentEditTextAreaElement.focus();
-          
+
           cancelCommentEditElement.addEventListener("click", () => {
             reRenderComments();
           });

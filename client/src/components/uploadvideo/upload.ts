@@ -4,7 +4,8 @@ import { spinnerStart, spinnerStop } from "../../utils/common";
 
 document.addEventListener("DOMContentLoaded", () => {
   const uploadSpinnerEl = document.getElementById("upload__spinner") as HTMLSpanElement;
-  const uploadErrorEl = document.getElementById("upload__error") as HTMLParagraphElement;
+  const uploadErrorEl = document.getElementById("upload-error") as HTMLParagraphElement;
+  const uploadSuccessEl = document.getElementById("upload-success") as HTMLParagraphElement;
   const videoUploadFormEl = document.getElementById("videoUploadForm") as HTMLFormElement;
 
   videoUploadFormEl.addEventListener("submit", async (event) => {
@@ -18,6 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
+      uploadSuccessEl.innerHTML = "Video uploaded successfully";
+      setTimeout(() => {
+        location.href = "../myvideos/myvideos.html";
+      }, 2000);
     } catch (error: any) {
       console.log(error);
       uploadErrorEl.innerHTML = error.response.data.message;
@@ -35,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
   videoInput.addEventListener("change", (e: Event) => {
     const target = e.target as HTMLInputElement;
     if (videoFileNameElement) {
-      videoFileNameElement.textContent = target.files?.[0]?.name || "cear";
+      videoFileNameElement.textContent = target.files?.[0]?.name || "";
     }
   });
 

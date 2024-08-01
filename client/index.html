@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./src/index.css" />
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
   </head>
-  <body class="bg-bodybgcolor text-white max-w-[76%] m-auto my-2">
+  <body class="bg-bodybgcolor text-white max-w-[76%] m-auto my-2 pb-40">
     <!-- Navbar -->
     <nav class="text-white py-2 w-full z-50 shadow-sm">
       <div class="flex items-center justify-between">
@@ -37,9 +37,12 @@
             </svg>
           </button>
         </div>
-
-        <div class="w-8 h-8 overflow-hidden rounded-full border">
-          <img id="nav-profile" src="/public/userIcon.png" alt="User" />
+        <div>
+          <div id="navbar-right" class="w-8 h-8 overflow-hidden rounded-full border">
+            <a href="./src/components/updateUser/changeProfileDetail.html">
+              <img id="nav-profile" src="/public/userIcon.png" alt="User" />
+            </a>
+          </div>
         </div>
       </div>
     </nav>
@@ -112,6 +115,20 @@
                 <span class="ml-3 text-sm font-medium">Change profile</span>
               </a>
             </li>
+            <li id="sidebar-myvideos">
+              <a href="./src/components/myvideos/myvideos.html" class="flex items-center p-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors duration-200 group">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M14 6H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Zm7 11-6-2V9l6-2v10Z"
+                  />
+                </svg>
+                <span class="ml-3 text-sm font-medium">My Videos</span>
+              </a>
+            </li>
           </ul>
         </nav>
         <div id="sidebar-logout" class="p-5 border-t border-gray-700">
@@ -140,8 +157,8 @@
       </div>
       <div id="suggested-videos" class="flex flex-col gap-6"></div>
       <!-- Delete modal -->
-      <div id="comment-delete-modal" class="hidden fixed bg-bgdeletemodal px-8 py-5 rounded-md top-[35%] left-[50%] flex gap-4 flex-col z-30">
-        <h3 class="text-gray-200">Delete comment</h3>
+      <div id="comment-delete-modal" class="hidden fixed bg-bgdeletemodal px-8 py-5 rounded-md  translate-x-[-50%] translate-y-[-50%]  top-[50%] left-[50%] flex gap-4 flex-col z-30">
+        <h3 class="text-gray-200 text-lg">Delete comment</h3>
         <p class="text-gray-500 text-sm">Delete your comment permanently?</p>
         <div class="ml-auto flex gap-6">
           <button id="cancel-comment-deletion" class="text-blue-600 px-3 py-2 rounded-full hover:bg-blue-300 hover:bg-opacity-10">Cancel</button>

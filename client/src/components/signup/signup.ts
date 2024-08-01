@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const showSignupMessage = (success: boolean, error: any) => {
     signupMessageElement.classList.remove("hidden");
     mainContainerElement.classList.remove("opacity-50");
+    signupMessageElement.classList.remove("text-red-600");
+    signupMessageElement.classList.add("text-green-600");
     if (success) {
       signupMessageElement.innerHTML = 
       `User registered successfully, 

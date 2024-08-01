@@ -2,13 +2,13 @@ import { IVideo } from "../../interface/videoCard";
 import { timeAndDateFormater } from "../../utils/dateFormatter";
 import { formatDuration, formatViews } from "../../utils/formatDurationAndViews";
 
-export const VideoCard = (video: IVideo) => `
-  <div id="video-item" class="group cursor-pointer flex flex-col w-full max-w-xs transition-all duration-300" 
+export const FilterVideoCard = (video: IVideo) => `
+  <div id="video-item" class="cursor-pointer flex w-full" 
     data-videoPublicId="${video.videoPublicId}"
     data-videoId="${video.id}"
     >
     <div class="relative w-full h-44 overflow-hidden rounded-lg shadow-lg bg-gray-800">
-      <img src="${video.thumbnailUrl}" alt="${video.title}" class="object-cover w-full h-full transition-transform duration-300" />
+      <img src="${video.thumbnailUrl}" alt="${video.title}" class="object-cover w-full h-full" />
       <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
         ${formatDuration(Math.trunc(video.duration))}
       </div>
