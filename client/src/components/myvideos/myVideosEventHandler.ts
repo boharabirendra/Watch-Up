@@ -77,7 +77,7 @@ async function renderVideos() {
     myVideosContainerElement.innerHTML = "No, videos found!";
     return;
   }
-  const videosHTML = myVideos.map((videos: any) => MyVideoCard(videos.video)).join("");
+  const videosHTML = myVideos.map((video: any) => MyVideoCard(video)).join("");
   myVideosContainerElement.innerHTML = videosHTML;
 }
 

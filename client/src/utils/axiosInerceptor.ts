@@ -35,7 +35,7 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        location.href = "../login/login.html";
+        // location.href = "../login/login.html";
         return Promise.reject(refreshError);
       }
     }

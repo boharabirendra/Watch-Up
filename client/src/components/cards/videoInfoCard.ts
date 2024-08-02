@@ -10,14 +10,14 @@ export const VideoInfoCard = (video: IVideo) => `
           <div class="min-w-12 mt-2 flex gap-4">
             <div>
               <img
-                src="${video.userVideos[0].profileUrl || DEFAULT_IMAGE_URL}"
+                src="${video.user.profileUrl || DEFAULT_IMAGE_URL}"
                 class="h-12 w-12 rounded-full"
                 alt="user"
               />
             </div>
             <div class="flex gap-4 items-center">
               <div>
-                <p>@${video.userVideos[0].fullName}</p>
+                <p>@${video.user.fullName}</p>
                 <div class="flex gap-3 text-sm text-gray-400">
                   <p>${video.views} views</p>
                   <p>${timeAndDateFormater(video.createdAt)}</p>

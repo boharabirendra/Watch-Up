@@ -8,7 +8,6 @@ export async function fetchVideos(filter: string): Promise<string> {
   const url = filter ? `${BASE_URL}/videos/get-videos?q=${filter}` : `${BASE_URL}/videos/get-videos`;
   try {
     const response = await axios.get(url);
-    console.log(response);
     const videosArray: IVideo[] = response.data.data;
     console.log(videosArray);
     if (videosArray.length === 0) {
@@ -22,17 +21,22 @@ export async function fetchVideos(filter: string): Promise<string> {
   }
 }
 
-export async function fetchSuggestionVideos(videoPublicId: string): Promise<string> {
-  const url = `${BASE_URL}/videos/get-suggestion-vidoes/${videoPublicId}`;
+export async function fetchSuggestionVideos(videoPublicId: string, page: number) {
+  const url = `${BASE_URL}/videos/get-suggestion-vidoes?videoPublicId=${videoPublicId}&page=${page}`;
   try {
     const response = await axios.get(url);
     const videosArray: IVideo[] = response.data.data;
-    const videos = videosArray.map((video: IVideo) => VideoCard(video)).join("");
-    return videos;
+    return videosArray;
   } catch (error) {
     console.log(error);
-    return "";
+    return [];
   }
+}
+
+export async function generateSuggestedVideoHtml(videoPublicId: string, page: number): Promise<string> {
+  const videosArray: IVideo[] = await fetchSuggestionVideos(videoPublicId, page);
+  const videos = videosArray.map((video: IVideo) => VideoCard(video)).join("");
+  return videos;
 }
 
 export const fetchVideoById = async (videoPublicId: string) => {

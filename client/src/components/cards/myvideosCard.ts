@@ -8,7 +8,7 @@ export const MyVideoCard = (video: IVideo) => `
               <div class="flex justify-between text-sm text-gray-100 mb-4">
                 <span>Views: ${video.views}</span>
                 <span class="">Likes: ${video.likes}</span>
-                <span class="">Comments: ${video.commentCount}</span>
+                <span class="">Comments: ${video._count.userComment}</span>
               </div>
               <div class="flex justify-between items-center">
                 <button 
