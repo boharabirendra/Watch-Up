@@ -2,6 +2,10 @@
 
 WatchUp is a feature-rich video streaming platform that allows users to upload, share, and interact with videos. Built with modern web technologies, it provides a seamless experience for content creators and viewers alike.
 
+## Database schema of WatchUp
+
+![logo](/public/dbschema.png)
+
 ## Features
 
 - User Authentication:
