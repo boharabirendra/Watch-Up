@@ -1,5 +1,4 @@
-import axios from "axios";
-import { BASE_URL } from "../../constants/constants";
+import api from "../../utils/axiosInerceptor";
 import { spinnerStart, spinnerStop } from "../../utils/common";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -14,9 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
     videoUploadFormEl.classList.add("opacity-50");
     const formData = new FormData(videoUploadFormEl);
     try {
-      await axios.post(`${BASE_URL}/videos/add-video`, formData, {
+      await api.post(`/videos/add-video`, formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          "Content-Type": "multipart/form-data",
         },
       });
       uploadSuccessEl.innerHTML = "Video uploaded successfully";

@@ -4,7 +4,7 @@ import { BASE_URL } from "../../constants/constants";
 export const logoutUser = async () => {
   try {
     const response = await axios.put(
-      `${BASE_URL}/users/logout`,
+      `/users/logout`,
       {},
       {
         headers: {
