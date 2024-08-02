@@ -20,11 +20,10 @@ model User {
   password      String
   profileUrl    String?
   imagePublicId String?
-  refreshToken  String
   role          String        @default("VIEWER")
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-  userVideos    UserVideo[]
+  video         Video[]
   userComment   UserComment[]
   userLike      UserLike[]
 
@@ -44,19 +43,12 @@ model Video {
   isPublished   Boolean       @default(false)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-  userVideos    UserVideo[]
+  userId        Int           
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userComment   UserComment[]
   userLike      UserLike[]
 
   @@index([title])
-}
-
-model UserVideo {
-  id      Int   @id @default(autoincrement())
-  userId  Int
-  videoId Int
-  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  video   Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
 }
 
 model Comment {

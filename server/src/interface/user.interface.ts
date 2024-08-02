@@ -6,7 +6,6 @@ export interface IUser {
   password: string;
   profileUrl: string;
   imagePublicId: string;
-  refreshToken: string;
   role: string
 }
 

@@ -2,7 +2,7 @@ import prisma from "../db/prisma.db";
 import { ChangePassword, IUser, UpdateUser } from "../interface/user.interface";
 
 export const registerUser = (user: IUser) => {
-  const { fullName, email, password, profileUrl, role, refreshToken, imagePublicId } =
+  const { fullName, email, password, profileUrl, role, imagePublicId } =
     user;
   return prisma.user.create({
     data: {
@@ -11,7 +11,6 @@ export const registerUser = (user: IUser) => {
       password,
       profileUrl,
       role,
-      refreshToken,
       imagePublicId,
     },
   });
@@ -33,27 +32,9 @@ export const getUserById = (id: number) => {
   });
 };
 
-export const updateRefreshToken = (id: number, refreshToken: string) => {
-  return prisma.user.update({
-    data: {
-      refreshToken,
-    },
-    where: {
-      id,
-    },
-  });
-};
 
-export const logoutUser = (id: number) => {
-  return prisma.user.update({
-    data: {
-      refreshToken: "",
-    },
-    where: {
-      id,
-    },
-  });
-};
+
+
 
 export const changePassword = ({
   id,

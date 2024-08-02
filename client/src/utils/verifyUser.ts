@@ -1,13 +1,8 @@
-import axios from "axios";
-import { BASE_URL } from "../constants/constants";
+import api from "./axiosInerceptor";
 
 export const isUserAuthenticated = async (): Promise<boolean> => {
   try {
-    await axios.get(`/users/me`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-      },
-    });
+    await api.get(`/users/me`);
     return true;
   } catch (error) {
     console.log(error);

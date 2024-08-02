@@ -1,5 +1,4 @@
-import axios from "axios";
-import { BASE_URL } from "../../constants/constants";
+import api from "../../utils/axiosInerceptor";
 
 export class ViewTracker {
   viewThreshold = 5000;
@@ -46,15 +45,7 @@ export class ViewTracker {
 
   async recordView() {
     try {
-      await axios.put(
-        `/videos/update-views/${this.videoPublicId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        }
-      );
+      await api.put(`/videos/update-views/${this.videoPublicId}`);
     } catch (error) {
       this.clearViewTimer();
       console.log(error);

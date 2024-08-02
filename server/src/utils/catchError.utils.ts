@@ -1,4 +1,4 @@
-import { NextFunction } from "express-serve-static-core";
+import { NextFunction } from "express";
 import { Request, RequestHandler, Response } from "express";
 
 export const catchAsyncError = (fn: RequestHandler) => {

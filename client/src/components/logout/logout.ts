@@ -1,21 +1,11 @@
-import axios from "axios";
-import { BASE_URL } from "../../constants/constants";
+import api from "../../utils/axiosInerceptor";
 
 export const logoutUser = async () => {
   try {
-    const response = await axios.put(
-      `/users/logout`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      }
-    );
+    const response = await api.put(`/users/logout`);
     if (response.status === 200) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
-      localStorage.removeItem("userId");
       localStorage.removeItem("profileUrl");
     }
   } catch (error) {

@@ -15,7 +15,7 @@ const logger = loggerWithNameSpace("[User Service]:");
 /**create user */
 export const registerUser = async (user: IUser) => {
   const existingUser = await isUserExists({ email: user.email });
-  if (existingUser) throw new ConflictError(`User with email {${user.email}} already exists.`);
+  if (existingUser) throw new ConflictError(`User already exists.`);
 
   try {
     const [password, uResponse] = await Promise.all([generateHashedPassword(user.password), user.profileUrl ? uploadImageOnCloudinary(user.profileUrl) : null]);
@@ -23,7 +23,6 @@ export const registerUser = async (user: IUser) => {
     await UserModel.registerUser({
       ...user,
       password,
-      refreshToken: "",
       profileUrl: uResponse?.secure_url || "",
       imagePublicId: uResponse?.public_id || "",
     });
@@ -36,7 +35,7 @@ export const registerUser = async (user: IUser) => {
 /**login user */
 export const loginUser = async ({ email, password }: LoginCredentials) => {
   const existingUser = await isUserExists({ email });
-  if (!existingUser) throw new NotFoundError(`User with email ${email} does not exist.`);
+  if (!existingUser) throw new NotFoundError(`User with email does not exist.`);
   if (!(await isPasswordValid(password, existingUser.password))) throw new UnauthenticatedError("Invalid password");
 
   const payload = {
@@ -48,7 +47,6 @@ export const loginUser = async ({ email, password }: LoginCredentials) => {
   };
   try {
     const { accessToken, refreshToken } = generateAccessAndRefreshToken(payload);
-    await updateRefreshToken(existingUser.id, refreshToken);
     const user = await UserModel.getUserByEmail(email);
     const userWithOutPassword = { ...user, password: "" };
     return { accessToken, refreshToken, ...userWithOutPassword };
@@ -70,33 +68,6 @@ export const changePassword = async ({ id, oldPassword, newPassword }: ChangePas
   } catch (error) {
     logger.error(error);
     throw new InternalServerError("Password change failed.");
-  }
-};
-
-/* logout user */
-export const logoutUser = async (id: number) => {
-  try {
-    await UserModel.logoutUser(id);
-  } catch (error) {
-    logger.error(error);
-    throw new InternalServerError("Failed to logout user");
-  }
-};
-
-/** update refresh token  */
-export const updateRefreshToken = async (id: number, refreshToken: string) => {
-  try {
-    const user = await UserModel.updateRefreshToken(id, refreshToken);
-    const payload = {
-      id: user.id,
-      role: user.role,
-      email: user.email,
-      fullName: user.fullName,
-    };
-    return generateAccessAndRefreshToken(payload);
-  } catch (error) {
-    logger.error(error);
-    throw new InternalServerError("Failed to update refresh token");
   }
 };
 
@@ -149,7 +120,6 @@ export const updateUserProfile = async ({ id, profileUrl }: UpdaterUserProfile) 
     throw new BadRequestError("Error while updating user profile");
   }
 };
-
 
 /*password matcher */
 const isPasswordValid = (plainPassword: string, hashedPassword: string) => bcryptjs.compare(plainPassword, hashedPassword);

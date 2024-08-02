@@ -26,9 +26,9 @@ export const navbarHandler = async () => {
       navbarRightElement.classList.add("hidden");
       sidebarUploadElement.classList.add("hidden");
       sidebarLogoutElement.classList.add("hidden");
+      sidebarMyVideosElement.classList.add("hidden");
       sidebarChangeProfileElement.classList.add("hidden");
       sidebarChangePasswordElement.classList.add("hidden");
-      sidebarMyVideosElement.classList.add("hidden");
     }
   } catch (error) {
     console.log(error);

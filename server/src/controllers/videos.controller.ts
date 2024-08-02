@@ -7,6 +7,7 @@ import { AuthRequest } from "../interface/auth.interface";
 import * as VideoService from "../services/videos.service";
 import { catchAsyncError } from "../utils/catchError.utils";
 
+
 export const createVideo = catchAsyncError(async (req: AuthRequest, res: Response) => {
   const { id: userId } = req.user;
   const { title, description } = req.body;
@@ -31,9 +32,9 @@ export const getVideos = catchAsyncError(async (req: Request<any, any, any, any>
   res.status(HttpStatusCode.OK).json(new ApiResponse("Videos list", videos));
 });
 
-export const getSuggestionVideos = catchAsyncError(async (req: Request, res: Response) => {
-  const { videoPublicId } = req.params;
-  const videos = await VideoService.getSuggestionVideos(videoPublicId);
+export const getSuggestionVideos = catchAsyncError(async (req: Request<any, any, any, any>, res: Response) => {
+  const { videoPublicId, page } = req.query;
+  const videos = await VideoService.getSuggestionVideos(videoPublicId, Number(page));
   res.status(HttpStatusCode.OK).json(new ApiResponse("Videos list", videos));
 });
 
