@@ -47,7 +47,7 @@ export class ViewTracker {
   async recordView() {
     try {
       await axios.put(
-        `${BASE_URL}/videos/update-views/${this.videoPublicId}`,
+        `/videos/update-views/${this.videoPublicId}`,
         {},
         {
           headers: {

@@ -1,5 +1,4 @@
-import axios from "axios";
-import { BASE_URL } from "../../constants/constants";
+import api from "../../utils/axiosInerceptor";
 
 document.addEventListener("DOMContentLoaded", () => {
   const newPasswordElement = document.getElementById("new-password") as HTMLInputElement;
@@ -23,11 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const formData = new FormData(changePasswordFormElement);
     try {
-      await axios.put(`${BASE_URL}/users/change-password`, formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
+      await api.put(`/users/change-password`, formData);
       changePasswordMessageElement.classList.remove("hidden");
       changePasswordMessageElement.classList.add("text-green-500");
       changePasswordMessageElement.classList.remove("text-red-600");

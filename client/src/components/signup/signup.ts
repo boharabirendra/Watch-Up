@@ -44,14 +44,13 @@ document.addEventListener("DOMContentLoaded", () => {
     signupMessageElement.classList.remove("text-red-600");
     signupMessageElement.classList.add("text-green-600");
     if (success) {
-      signupMessageElement.innerHTML = 
-      `User registered successfully, 
+      signupMessageElement.innerHTML = `User registered successfully, 
        Redirecting to login ...
       `;
       signupMessageElement.classList.add("text-green-600");
-      setTimeout(()=>{
-        window.location.href ="../login/login.html";
-      }, 2000)
+      setTimeout(() => {
+        window.location.href = "../login/login.html";
+      }, 2000);
     } else {
       signupMessageElement.classList.add("text-red-600");
       signupMessageElement.innerHTML = error.response.data.message;

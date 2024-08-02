@@ -1,5 +1,4 @@
-import axios from "axios";
-import { BASE_URL } from "../../constants/constants";
+import api from "../../utils/axiosInerceptor";
 import { spinnerStart, spinnerStop } from "../../utils/common";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -11,12 +10,12 @@ document.addEventListener("DOMContentLoaded", () => {
   videoUploadFormEl.addEventListener("submit", async (event) => {
     event.preventDefault();
     spinnerStart(uploadSpinnerEl);
-    videoUploadFormEl.classList.add("opacity-25");
+    videoUploadFormEl.classList.add("opacity-50");
     const formData = new FormData(videoUploadFormEl);
     try {
-      await axios.post(`${BASE_URL}/videos/add-video`, formData, {
+      await api.post(`/videos/add-video`, formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          "Content-Type": "multipart/form-data",
         },
       });
       uploadSuccessEl.innerHTML = "Video uploaded successfully";
@@ -28,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
       uploadErrorEl.innerHTML = error.response.data.message;
     } finally {
       spinnerStop(uploadSpinnerEl);
-      videoUploadFormEl.classList.remove("opacity-25");
+      videoUploadFormEl.classList.remove("opacity-50");
     }
   });
 

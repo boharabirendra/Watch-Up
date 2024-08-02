@@ -1,14 +1,9 @@
-import axios from "axios";
-import { BASE_URL } from "../constants/constants";
+import api from "./axiosInerceptor";
 
 export const getUser = async () => {
   try {
     if (localStorage.getItem("accessToken")) {
-      const response = await axios.get(`${BASE_URL}/users/me`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
+      const response = await api.get(`/users/me`);
       return response.data.data;
     }
     return null;

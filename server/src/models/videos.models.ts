@@ -143,6 +143,7 @@ export const getSuggestionVideos = (videoPublicId: string) => {
         },
       },
     },
+    take: 4,
   });
 };
 export const getMyVideos = async (userId: number) => {

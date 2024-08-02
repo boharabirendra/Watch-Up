@@ -1,8 +1,9 @@
-import axios from "axios";
 import { getUser } from "../../utils/getUser";
-import { BASE_URL } from "../../constants/constants";
-import { spinnerStart, spinnerStop } from "../../utils/common";
+import api from "../../utils/axiosInerceptor";
+
 import { DEFAULT_IMAGE_URL } from "../constants/constants";
+
+import { spinnerStart, spinnerStop } from "../../utils/common";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const changeProfileFullNameElement = document.getElementById("fullname") as HTMLInputElement;
@@ -32,9 +33,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       changeProfileFormElement.classList.add("opacity-25");
 
       const formData = new FormData(changeProfileFormElement);
-      await axios.put(`${BASE_URL}/users/update-user`, formData, {
+      await api.put(`/users/update-user`, formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (error) {
     console.log(error);
     showUpdateMessage(false, error);
-  } 
+  }
 
   function changeUpdateAccountUI() {
     changeProfileUpdateAccountBtnElement.disabled = false;
