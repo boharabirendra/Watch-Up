@@ -7,6 +7,7 @@ import { authenticate } from "../middlewares/auth.middleware";
 import { verifyUser } from "../middlewares/me.auth.middlewares";
 import { validateReqBody } from "../middlewares/validator.middleware";
 import { upload, loginUserBodyParser, updateUserBodyParser, registerUserBodyParser, changePasswordBodyParser } from "../middlewares/multer.middleware";
+import { refreshToken } from "../utils/refreshToken.utils";
 
 const router = Router();
 
@@ -14,6 +15,7 @@ const router = Router();
 router.route("/me").get(verifyUser);
 
 /**POST request */
+router.route("/refreshtoken").post(refreshToken);
 router.route("/login").post(loginUserBodyParser, validateReqBody(loginBodySchema), UserController.loginUser);
 router.route("/register").post(registerUserBodyParser, validateReqBody(registerUserBodySchema), UserController.registerUser);
 
