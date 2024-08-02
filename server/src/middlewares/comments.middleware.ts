@@ -12,16 +12,16 @@ import { AuthRequest } from "../interface/auth.interface";
 const logger = loggerWithNameSpace("Auth Middleware: ");
 
 export const commentAuthenticator = (req: AuthRequest, res: Response, next: NextFunction) => {
-  const { authorization } = req.headers;
-  if (!authorization) {
-    throw new UnauthenticatedError("Access token required");
-  }
-
-  const token = authorization.split(" ");
-  if (token.length !== 2 || token[0] !== "Bearer") {
-    throw new UnauthenticatedError("Invalid access token");
-  }
   try {
+    const { authorization } = req.headers;
+    if (!authorization) {
+      throw new UnauthenticatedError("Access token required");
+    }
+
+    const token = authorization.split(" ");
+    if (token.length !== 2 || token[0] !== "Bearer") {
+      throw new UnauthenticatedError("Invalid access token");
+    }
     const payload = jwt.verify(token[1], config.jwt.access_token_secret!) as IUser;
     req.user = {
       id: payload.id,

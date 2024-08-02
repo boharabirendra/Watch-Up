@@ -7,12 +7,7 @@ export const createVideo = (video: IVideo, userId: number) => {
     const cVideo = await tx.video.create({
       data: {
         ...video,
-      },
-    });
-    await tx.userVideo.create({
-      data: {
         userId,
-        videoId: cVideo.id,
       },
     });
   });
@@ -28,18 +23,7 @@ export const getVideos = ({ q, size, page }: GetUserQuery) => {
       isPublished: true,
     },
     include: {
-      userVideos: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              profileUrl: true,
-              fullName: true,
-              email: true,
-            },
-          },
-        },
-      },
+      user: true,
     },
     skip: (page - 1) * size,
     take: size,
@@ -93,86 +77,38 @@ export const getVideoById = (id: number, userId: number) => {
     where: {
       id,
     },
-    include: {
-      userVideos: {
-        where: {
-          userId,
-        },
-      },
-    },
   });
 };
 
 export const getVideoByPublicId = (videoPublicId: string) => {
-  return prisma.video.findMany({
+  return prisma.video.findUnique({
     where: { videoPublicId },
-    include: {
-      userVideos: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              profileUrl: true,
-              fullName: true,
-              email: true,
-            },
-          },
-        },
-      },
-    },
+    include: {user: true}
   });
 };
 
-export const getSuggestionVideos = (videoPublicId: string) => {
+export const getSuggestionVideos = (videoPublicId: string, page: number) => {
   return prisma.video.findMany({
     where: {
       videoPublicId: { not: videoPublicId },
       isPublished: true,
     },
     include: {
-      userVideos: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              fullName: true,
-              email: true,
-              profileUrl: true,
-            },
-          },
-        },
-      },
+      user: true,
     },
+    skip: (page - 1) * 4,
     take: 4,
   });
 };
+
 export const getMyVideos = async (userId: number) => {
-  return prisma.userVideo
-    .findMany({
-      where: {
-        userId,
-      },
-      include: {
-        video: {
-          include: {
-            userComment: {
-              include: {
-                comment: true,
-              },
-            },
-          },
-        },
-      },
-    })
-    .then((videos) =>
-      videos.map((video) => ({
-        ...video,
-        video: {
-          ...video.video,
-          commentCount: video.video.userComment.length, // Count comments
-        },
-      }))
-    );
+  return prisma.video.findMany({
+    where: { userId },
+    include: {
+      user: true,
+      _count: { select: { userComment: true } },
+    },
+  });
 };
 
 export const publishVideo = (id: number) => {

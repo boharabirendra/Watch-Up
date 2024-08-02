@@ -11,19 +11,10 @@ export const refreshToken = async (req: Request, res: Response) => {
   const logger = loggerWithNameSpace("Refresh token");
   const { refreshToken } = req.body;
 
-  if (!refreshToken) {
-    return res.status(401).json({ error: "Refresh token is required" });
-  }
-
+  if (!refreshToken) return res.status(401).json({ error: "Refresh token is required" });
+  
   try {
     const payload = jwt.verify(refreshToken, config.jwt.refresh_token_secret!) as IPayload;
-
-    const user = await getUserById(payload.id);
-
-    if (!user || user.refreshToken !== refreshToken) {
-      return res.status(401).json({ error: "Invalid refresh token" });
-    }
-
     const { accessToken } = generateAccessAndRefreshToken(payload);
     res.status(200).json({ accessToken });
   } catch (error) {

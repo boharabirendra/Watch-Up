@@ -46,12 +46,6 @@ export const getUserById = catchAsyncError(async (req: AuthRequest, res: Respons
   res.status(HttpStatusCode.OK).json(new ApiResponse("User detail", user));
 });
 
-/**Logout user */
-export const logoutUser = catchAsyncError(async (req: AuthRequest, res: Response) => {
-  const { id } = req.user;
-  await UserService.logoutUser(id);
-  res.status(HttpStatusCode.OK).json(new ApiResponse("User logged out successfully"));
-});
 
 /**Update user */
 export const updateUser = catchAsyncError(async (req: AuthRequest, res: Response) => {

@@ -33,65 +33,29 @@ export const createVideo = async (video: UploadVideo, userId: number) => {
 export const getVideos = async ({ q, size, page }: GetUserQuery) => {
   try {
     const videos = await VideoModel.getVideos({ q, size, page });
-    if (!videos) return null;
-    return videos.map((video) => ({
-      id: video.id,
-      title: video.title,
-      description: video.description,
-      playbackUrl: video.playbackUrl,
-      views: video.views,
-      likes: video.likes,
-      duration: video.duration,
-      videoPublicId: video.videoPublicId,
-      createdAt: video.createdAt,
-      thumbnailUrl: video.thumbnailUrl,
-      userVideos: video.userVideos.map((userVideo) => ({
-        userId: userVideo.user.id,
-        profileUrl: userVideo.user.profileUrl,
-        fullName: userVideo.user.fullName,
-        email: userVideo.user.email,
-      })),
-    }));
+    return videos;
   } catch (error) {
     logger.error(error);
-    throw new NotFoundError("No videos found");
+    throw new InternalServerError("Error while fetching videos");
   }
 };
 
-export const getSuggestionVideos = async (videoPublicId: string) => {
+export const getSuggestionVideos = async (videoPublicId: string, page: number) => {
   try {
-    const videos = await VideoModel.getSuggestionVideos(videoPublicId);
-    if (!videos) return null;
-    return videos.map((video) => ({
-      id: video.id,
-      title: video.title,
-      description: video.description,
-      playbackUrl: video.playbackUrl,
-      views: video.views,
-      likes: video.likes,
-      duration: video.duration,
-      videoPublicId: video.videoPublicId,
-      createdAt: video.createdAt,
-      thumbnailUrl: video.thumbnailUrl,
-      userVideos: video.userVideos.map((userVideo) => ({
-        userId: userVideo.user.id,
-        profileUrl: userVideo.user.profileUrl,
-        fullName: userVideo.user.fullName,
-        email: userVideo.user.email,
-      })),
-    }));
+    const videos = await VideoModel.getSuggestionVideos(videoPublicId, page);
+    return videos;
   } catch (error) {
     logger.error(error);
-    throw new NotFoundError("No videos found");
+    throw new InternalServerError("Error while fetching videos");
   }
 };
 
-export const updateVideoDetail = async (videoInfo: updateVideoInfo, thumbnail:string, id: number) => {
+export const updateVideoDetail = async (videoInfo: updateVideoInfo, thumbnail: string, id: number) => {
   try {
-    if(thumbnail){
+    if (thumbnail) {
       const cResponse = await uploadImageOnCloudinary(thumbnail);
       await VideoModel.updateVideoDetail(videoInfo, cResponse!.secure_url, id);
-    }else{
+    } else {
       await VideoModel.updateVideoDetail(videoInfo, "", id);
     }
   } catch (error) {
@@ -131,25 +95,7 @@ export const getVideoById = async (id: number, userId: number) => {
 export const getVideoByPublicId = async (videoPublicId: string) => {
   try {
     const videos = await VideoModel.getVideoByPublicId(videoPublicId);
-    if (!videos) return null;
-    return videos.map((video) => ({
-      id: video.id,
-      title: video.title,
-      description: video.description,
-      playbackUrl: video.playbackUrl,
-      views: video.views,
-      likes: video.likes,
-      duration: video.duration,
-      videoPublicId: video.videoPublicId,
-      createdAt: video.createdAt,
-      thumbnailUrl: video.thumbnailUrl,
-      userVideos: video.userVideos.map((userVideo) => ({
-        userId: userVideo.user.id,
-        profileUrl: userVideo.user.profileUrl,
-        fullName: userVideo.user.fullName,
-        email: userVideo.user.email,
-      })),
-    }));
+    return videos;
   } catch (error) {
     logger.error(error);
     throw new InternalServerError("Error while fetching video");
@@ -166,21 +112,20 @@ export const getMyVideos = async (userId: number) => {
   }
 };
 
-
-export const publishVideo = async (id: number) =>{
+export const publishVideo = async (id: number) => {
   try {
     await VideoModel.publishVideo(id);
   } catch (error) {
     logger.error(error);
     throw new InternalServerError("Error while publishing vidoe");
   }
-}
+};
 
-export const unpublishVideo = async (id: number) =>{
+export const unpublishVideo = async (id: number) => {
   try {
     await VideoModel.unpublishVideo(id);
   } catch (error) {
     logger.error(error);
     throw new InternalServerError("Error while un publishing video");
   }
-}
+};

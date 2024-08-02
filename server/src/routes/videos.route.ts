@@ -18,12 +18,12 @@ router.route("/myvidoes").get(authenticate, VideoController.getMyVideos);
 router.route("/get-video/:id").get(authenticate, VideoController.getVideoById);
 router.route("/get-video/public/:videoPublicId").get(VideoController.getVideoByPublicId);
 router.route("/get-videos").get(validateReqQuery(getUserQuerySchema), VideoController.getVideos);
-router.route("/get-suggestion-vidoes/:videoPublicId").get(VideoController.getSuggestionVideos);
+router.route("/get-suggestion-vidoes").get(VideoController.getSuggestionVideos);
 
 /**PUT request */
 router.route("/publish/:id").put(authenticate, VideoController.publishVideo);
 router.route("/unpublish/:id").put(authenticate, VideoController.unpublishVideo);
-router.route("/update-views/:videoPublicId").put(authenticate, VideoController.updateVideoViews);
+router.route("/update-views/:videoPublicId").put(VideoController.updateVideoViews);
 router.route("/update-video/:videoId").put(authenticate, updateVideoBodyParser, VideoController.updateVideoDetail);
 
 /**DELETE request */
