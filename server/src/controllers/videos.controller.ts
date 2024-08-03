@@ -78,7 +78,8 @@ export const getVideoByPublicId = catchAsyncError(async (req: AuthRequest, res: 
 
 export const getMyVideos = catchAsyncError(async (req: AuthRequest, res: Response) => {
   const { id: userId } = req.user;
-  const videos = await VideoService.getMyVideos(Number(userId));
+  const {page, size} = req.query;
+  const videos = await VideoService.getMyVideos(Number(userId), Number(page), Number(size));
   res.status(HttpStatusCode.OK).json(new ApiResponse("Videos list", videos));
 });
 

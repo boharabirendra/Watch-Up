@@ -115,8 +115,13 @@ export const getSuggestionVideos = (videoPublicId: string, page: number, size: n
   });
 };
 
-export const getMyVideos = async (userId: number) => {
-  return prisma.video.findMany({
+export const getMyVideos = async (userId: number, page: number, size: number) => {
+
+  const totalVideos = await prisma.video.count({
+    where: { userId },
+  });
+
+  const videos = await prisma.video.findMany({
     where: { userId },
     include: {
       user: {
@@ -129,7 +134,10 @@ export const getMyVideos = async (userId: number) => {
       },
       _count: { select: { userComment: true } },
     },
+    skip: (page - 1) * size,
+    take: size,
   });
+  return { totalVideos, videos };
 };
 
 export const publishVideo = (id: number) => {
