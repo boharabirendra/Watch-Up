@@ -98,11 +98,13 @@ function deleteVideo(deleteVideoElement: HTMLButtonElement) {
 
 async function renderVideos(page: number) {
   const myVideosContainerElement = document.getElementById("myvideo-container") as HTMLDivElement;
+  const paginationContainerElement = document.getElementById("pagination-container") as HTMLDivElement;
   myVideosContainerElement.innerHTML = myVideoSkeletonHTML();
 
   const response: any = await getMyVideos(page);
   totalVideos = response.totalVideos;
   if (!response.videos.length) {
+    paginationContainerElement.classList.add("hidden");
     myVideosContainerElement.innerHTML = "No, videos found!";
     return;
   }

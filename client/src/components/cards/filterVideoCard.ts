@@ -3,7 +3,7 @@ import { timeAndDateFormater } from "../../utils/dateFormatter";
 import { formatDuration, formatViews } from "../../utils/formatDurationAndViews";
 
 export const FilterVideoCard = (video: IVideo) => `
-  <div class="video-item cursor-pointer flex gap-2" 
+  <div class="video-item cursor-pointer flex flex-col items-center md:flex-row gap-2" 
     data-videoPublicId="${video.videoPublicId}"
     data-videoId="${video.id}"
     >
