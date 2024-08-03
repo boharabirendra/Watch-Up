@@ -1,7 +1,6 @@
 import { IVideo } from "./interface/videoCard";
 import { appendVideoCard } from "./utils/appendVideoCard";
 import { getComments } from "./components/comments/comment";
-import { ViewTracker } from "./components/views/viewTracker";
 import { VideoInfoCard } from "./components/cards/videoInfoCard";
 import { VideoPlayer } from "./components/videoplayer/videoPlayer";
 import { CommentInfoCard } from "./components/cards/commentInfoCard";
@@ -9,13 +8,18 @@ import { CommentInfoCard } from "./components/cards/commentInfoCard";
 import { getVideosViews } from "./components/likes/likes";
 import { likesHandler } from "./components/likes/likeHandler";
 
+import { ViewTracker } from "./components/views/viewTracker";
+
+import { throttle } from "./utils/throttle";
 import { generateSkeleton } from "./components/cards/videoCardSkeleton";
 import { logoutHandler, navbarHandler } from "./components/nav/navbarHandler";
 
 import { FilterVideoCard } from "./components/cards/filterVideoCard";
-import { generateLoadingSkeleton } from "./components/cards/videoPlayerSkeleton";
 import { handleComment, handleCommentDeletion, handleCommentEdit } from "./components/comments/commentHandler";
 import { fetchVideoById, fetchSuggestionVideos, generateFilterVideosHTML, fetchVideos } from "./components/videos/video";
+
+import { THROTTLING_TIME } from "./constants/constants";
+import { CurrentView } from "./components/constants/constants";
 
 class VideoController {
   private filter: string;
@@ -24,17 +28,22 @@ class VideoController {
   private filterPage: number;
   private hasMoreData: boolean;
   private suggestionPage: number;
-  private viewUpdateTimer: number;
   private videoPublicId: string | null;
-  private videoGridElement: HTMLDivElement;
+
+  private viewUpdateInterval: number | null = null;
+  private throttledHandleInfiniteScroll: () => void;
+  private currentView: CurrentView = CurrentView.Grid;
+  private currentViewTracker: ViewTracker | null = null;
+
   private mainVideoElement: HTMLVideoElement;
-  private videoPlayerElement: HTMLDivElement;
   private videoSearchElement: HTMLInputElement;
+
+  private videoGridElement: HTMLDivElement;
+  private videoPlayerElement: HTMLDivElement;
   private suggestedVideosElement: HTMLDivElement;
   private videoInfoContainerElement: HTMLDivElement;
   private filterVideosContainerElement: HTMLDivElement;
   private videoCommentContainerElement: HTMLDivElement;
-  private playerVideosContainerElement: HTMLDivElement;
 
   constructor() {
     this.videoGridElement = document.getElementById("video-grid") as HTMLDivElement;
@@ -43,7 +52,6 @@ class VideoController {
     this.videoPlayerElement = document.getElementById("video-player") as HTMLDivElement;
     this.suggestedVideosElement = document.getElementById("suggested-videos") as HTMLDivElement;
     this.videoInfoContainerElement = document.getElementById("video-info-container") as HTMLDivElement;
-    this.playerVideosContainerElement = document.getElementById("video-player-container") as HTMLDivElement;
     this.filterVideosContainerElement = document.getElementById("filter-videos-container") as HTMLDivElement;
     this.videoCommentContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
 
@@ -54,19 +62,20 @@ class VideoController {
     this.hasMoreData = true;
     this.suggestionPage = 1;
     this.videoPublicId = "";
-    this.viewUpdateTimer = 0;
 
-    window.addEventListener("scroll", this.handleGridVideoInfiniteScroll);
-    window.addEventListener("scroll", this.handleFilterVideoInfiniteScroll);
-    window.addEventListener("scroll", this.handleSuggestedVideoInfiniteScroll);
+    this.throttledHandleInfiniteScroll = throttle(this.handleInfiniteScroll, THROTTLING_TIME);
+    window.addEventListener("scroll", this.throttledHandleInfiniteScroll);
 
+    this.setupFilterVideosListener();
+    this.setupSuggestedVideosListener();
+    this.setupInitialVideoGridListener();
     this.init();
   }
 
   private init(): void {
     this.videoGridElement.innerHTML = generateSkeleton();
-    this.renderVideoGrid(this.filter);
     this.loadFromUrl();
+    this.renderVideoGrid(this.filter);
     this.filterVideos();
     window.addEventListener("popstate", () => this.loadFromUrl());
   }
@@ -76,12 +85,10 @@ class VideoController {
     this.videoPublicId = urlParams.get("v");
     const videoId = urlParams.get("videoId");
     if (this.videoPublicId && videoId) {
-      this.playerVideosContainerElement.innerHTML = generateLoadingSkeleton();
       this.videoId = videoId;
       this.loadVideo(this.videoPublicId);
     } else {
       this.showVideoGrid();
-      clearInterval(this.viewUpdateTimer);
     }
   }
 
@@ -96,7 +103,7 @@ class VideoController {
       await this.renderSuggestedVideos(videoPublicId);
       history.pushState(null, "", `?v=${videoPublicId}&videoId=${this.videoId}`);
 
-      likesHandler();
+      await likesHandler();
       handleComment();
       handleCommentEdit();
       handleCommentDeletion();
@@ -106,33 +113,27 @@ class VideoController {
   private showVideoGrid(): void {
     this.videoGridElement.classList.add("block");
     this.videoPlayerElement.classList.add("hidden");
+    this.filterVideosContainerElement.classList.add("hidden");
+    this.currentView = CurrentView.Grid;
   }
 
   private showVideoPlayer(): void {
     this.videoGridElement.classList.add("hidden");
     this.videoPlayerElement.classList.remove("hidden");
     this.filterVideosContainerElement.classList.add("hidden");
+    this.currentView = CurrentView.Suggested;
   }
 
-  private playVideo(videoUrl: string, videoPublicId: string): void {
-    new VideoPlayer(this.mainVideoElement, videoUrl);
-    new ViewTracker(this.mainVideoElement, videoPublicId);
-    this.suggestionPage = 1;
-    this.viewUpdateTimer = setInterval(async () => {
-      await this.viewsUpdator();
-    }, 12000);
-    window.scrollTo(0, 0);
+  private async showFilterVideoGrid() {
+    this.videoGridElement.classList.add("hidden");
+    this.videoPlayerElement.classList.add("hidden");
+    this.filterVideosContainerElement.classList.remove("hidden");
+    this.currentView = CurrentView.Filter;
   }
 
   /**Render initial videos */
-  private async renderVideoGrid(filter: string) {
-    const videos = await fetchVideos(filter);
-    this.videoGridElement.innerHTML = "";
-    if (videos.length === 0) this.hasMoreData = false;
-    for (let i = 0; i < videos.length; i++) {
-      const newVideo = appendVideoCard(videos[i]);
-      this.videoGridElement.appendChild(newVideo);
-    }
+
+  private setupInitialVideoGridListener(): void {
     this.videoGridElement.addEventListener("click", (event) => {
       const videoItem = (event.target as HTMLElement).closest(".video-item");
       if (videoItem) {
@@ -143,29 +144,40 @@ class VideoController {
     });
   }
 
-  /**Render suggested videos */
-  private async renderSuggestedVideos(currentVideoId: string) {
-    const videos = await fetchSuggestionVideos(currentVideoId, this.suggestionPage);
-    if (videos.length === 0) this.hasMoreData = false;
+  private async renderVideoGrid(filter: string) {
+    const videos = await fetchVideos(filter);
+    this.videoGridElement.innerHTML = "";
     for (let i = 0; i < videos.length; i++) {
       const newVideo = appendVideoCard(videos[i]);
-      this.suggestedVideosElement.appendChild(newVideo);
+      this.videoGridElement.appendChild(newVideo);
     }
+  }
+
+  /**Suggestion video section */
+  private setupSuggestedVideosListener(): void {
     this.suggestedVideosElement.addEventListener("click", (e) => {
       const videoItem = (e.target as HTMLElement).closest(".video-item");
       if (videoItem) {
         const videoId = videoItem.getAttribute("data-videoPublicId");
         this.videoId = videoItem.getAttribute("data-videoId")!;
-        this.loadVideo(videoId!);
+        if (videoId) this.loadVideo(videoId);
       }
     });
   }
 
-  /**Render fileter videos */
-  private async renderFilterVideoGrid(filter: string) {
-    this.videoGridElement.classList.add("hidden");
-    const videos = await generateFilterVideosHTML(filter);
-    this.filterVideosContainerElement.innerHTML = videos;
+  private async renderSuggestedVideos(currentVideoId: string) {
+    const videos = await fetchSuggestionVideos(currentVideoId, this.suggestionPage);
+    if (videos.length === 0) this.hasMoreData = false;
+    this.suggestedVideosElement.innerHTML = "";
+    for (let i = 0; i < videos.length; i++) {
+      const newVideo = appendVideoCard(videos[i]);
+      this.suggestedVideosElement.appendChild(newVideo);
+    }
+  }
+
+  /**Render filter videos section*/
+
+  private setupFilterVideosListener(): void {
     this.filterVideosContainerElement.addEventListener("click", (event) => {
       const videoItem = (event.target as HTMLElement).closest(".video-item");
       if (videoItem) {
@@ -175,30 +187,56 @@ class VideoController {
       }
     });
   }
+  private filterVideos() {
+    this.videoSearchElement.addEventListener("keydown", async (event) => {
+      if (event.key === "Enter") {
+        this.showFilterVideoGrid();
+        this.mainVideoElement.pause();
+        this.mainVideoElement.currentTime = 0;
+        this.filter = this.videoSearchElement.value.trim();
+        if (this.filter === "") return;
+        this.filterPage = 1;
+        this.renderFilterVideoGrid(this.filter);
+      }
+    });
+  }
 
-  private handleSuggestedVideoInfiniteScroll = () => {
+  private async renderFilterVideoGrid(filter: string) {
+    const videos = await generateFilterVideosHTML(filter);
+    this.filterVideosContainerElement.innerHTML = videos;
+  }
+
+  /**Loading data with scroll event listener */
+  private handleInfiniteScroll = () => {
     const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
     if (endOfPage) {
-      this.loadMoreSuggestedVideos(++this.suggestionPage);
+      switch (this.currentView) {
+        case CurrentView.Grid:
+          this.loadMoreGridVideos(++this.gridPage);
+          break;
+        case CurrentView.Filter:
+          this.loadMoreFilteredVideos(++this.filterPage);
+          break;
+        case CurrentView.Suggested:
+          this.loadMoreSuggestedVideos(++this.suggestionPage);
+          break;
+      }
     }
   };
 
-  private handleFilterVideoInfiniteScroll = () => {
-    const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
-    if (endOfPage) {
-      this.loadMoreFilteredVideos(++this.filterPage);
+  private async loadMoreGridVideos(gridPage: number) {
+    if (this.currentView !== CurrentView.Grid) return;
+    if (!this.hasMoreData) return;
+    const videos = await fetchVideos(this.filter, gridPage);
+    if (videos.length === 0) this.hasMoreData = false;
+    for (let i = 0; i < videos.length; i++) {
+      const newVideo = appendVideoCard(videos[i]);
+      this.videoGridElement.appendChild(newVideo);
     }
-  };
-
-  private handleGridVideoInfiniteScroll = () => {
-    const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
-    if (endOfPage) {
-      this.loadMoreGridVideos(++this.gridPage);
-    }
-  };
-
+  }
 
   private async loadMoreSuggestedVideos(page: number) {
+    if (this.currentView !== CurrentView.Suggested) return;
     if (!this.videoPublicId) return;
     if (!this.hasMoreData) return;
     const videos = await fetchSuggestionVideos(this.videoPublicId, page);
@@ -210,22 +248,13 @@ class VideoController {
   }
 
   private async loadMoreFilteredVideos(page: number) {
+    if (this.currentView !== CurrentView.Filter) return;
     if (!this.filter) return;
     if (!this.hasMoreData) return;
     const videos = await fetchVideos(this.filter, page);
     if (videos.length === 0) this.hasMoreData = false;
     const newVideo = videos.map((video) => FilterVideoCard(video)).join("");
     this.filterVideosContainerElement.insertAdjacentHTML("beforeend", newVideo);
-  }
-
-  private async loadMoreGridVideos(gridPage: number) {
-    if (!this.hasMoreData) return;
-    const videos = await fetchVideos(this.filter, gridPage);
-    if (videos.length === 0) this.hasMoreData = false;
-    for (let i = 0; i < videos.length; i++) {
-      const newVideo = appendVideoCard(videos[i]);
-      this.videoGridElement.appendChild(newVideo);
-    }
   }
 
   private loadVideoInfo(video: IVideo) {
@@ -237,24 +266,45 @@ class VideoController {
     this.videoCommentContainerElement.innerHTML = CommentInfoCard(comments);
   }
 
-  private filterVideos() {
-    this.videoSearchElement.addEventListener("keydown", async (event) => {
-      if (event.key === "Enter") {
-        this.filter = this.videoSearchElement.value.trim();
-        if (this.filter === "") return;
-        this.filterPage = 1;
-        this.renderFilterVideoGrid(this.filter);
-      }
-    });
-  }
-
-  private async viewsUpdator() {
+  /**View updator */
+  private async viewsUpdator(videoPublicId: string) {
     const viewElement = document.getElementById("video-views") as HTMLParagraphElement;
-    const urlParams = new URLSearchParams(window.location.search);
-    const videoPublicId = urlParams.get("v");
-    if (videoPublicId && viewElement) {
+    if (viewElement) {
       const views = await getVideosViews(videoPublicId);
       viewElement.innerHTML = views.views + " views";
+    }
+  }
+
+  /**Video player */
+  private playVideo(videoUrl: string, videoPublicId: string): void {
+    console.log(`Playing video: ${videoPublicId}`);
+    this.mainVideoElement.pause();
+    this.mainVideoElement.currentTime = 0;
+    if (this.currentViewTracker) {
+      this.currentViewTracker.stopTracking();
+    }
+    new VideoPlayer(this.mainVideoElement, videoUrl);
+    this.currentViewTracker = new ViewTracker(videoPublicId);
+    this.mainVideoElement.addEventListener("play", () => this.currentViewTracker?.startTracking());
+    this.mainVideoElement.addEventListener("pause", () => this.currentViewTracker?.stopTracking());
+    this.mainVideoElement.addEventListener("ended", () => this.currentViewTracker?.stopTracking());
+    window.scrollTo(0, 0);
+    this.suggestionPage = 1;
+    this.startViewUpdater(videoPublicId);
+  }
+
+  private startViewUpdater(videoPublicId: string) {
+    this.stopViewUpdater();
+    this.viewUpdateInterval = window.setInterval(() => {
+      this.viewsUpdator(videoPublicId);
+    }, 10000);
+    this.viewsUpdator(videoPublicId);
+  }
+
+  private stopViewUpdater() {
+    if (this.viewUpdateInterval !== null) {
+      clearInterval(this.viewUpdateInterval);
+      this.viewUpdateInterval = null;
     }
   }
 }

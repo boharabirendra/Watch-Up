@@ -17,7 +17,7 @@
               <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
             </svg>
           </button>
-          <a href="/" class="flex items-center">
+          <a href="/" class="hidden md:flex  items-center">
             <svg class="w-8 h-8 text-red-500 mr-1" viewBox="0 0 24 24" fill="currentColor">
               <path
                 d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C.488 3.45.029 5.804 0 12c.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0C23.512 20.55 23.971 18.196 24 12c-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 3.993L9 16z"
@@ -27,7 +27,7 @@
           </a>
         </div>
         <!-- Search bar -->
-        <div class="hidden sm:flex items-center flex-grow max-w-2xl mx-4">
+        <div class="flex sm:flex items-center flex-grow max-w-2xl mx-4">
           <input id="search" type="text" placeholder="Search" class="w-full px-4 py-2 bg-[#121212] border border-gray-700 rounded-l-full focus:outline-none focus:border-blue-500" />
           <button class="bg-[#222222] px-6 py-3 rounded-r-full hover:bg-[#313131] transition duration-200">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -158,17 +158,18 @@
         <div id="video-comment-container"></div>
       </div>
       <div id="suggested-videos" class="flex flex-col gap-6"></div>
-      <!-- Delete modal -->
-      <div id="comment-delete-modal" class="hidden fixed bg-bgdeletemodal px-8 py-5 rounded-md translate-x-[-50%] translate-y-[-50%] top-[50%] left-[50%] flex gap-4 flex-col z-30">
-        <h3 class="text-gray-200 text-lg">Delete comment</h3>
-        <p class="text-gray-500 text-sm">Delete your comment permanently?</p>
-        <div class="ml-auto flex gap-6">
-          <button id="cancel-comment-deletion" class="text-blue-600 px-3 py-2 rounded-full hover:bg-blue-300 hover:bg-opacity-10">Cancel</button>
-          <button id="comment-deletion" class="text-red-600 px-3 py-2 rounded-full hover:bg-red-300 hover:bg-opacity-10">Delete</button>
-        </div>
-      </div>
-      <div id="delete-modal-overlay" class="fixed inset-0 bg-black opacity-50 hidden z-20"></div>
     </div>
+    <!-- Delete modal -->
+    <div id="comment-delete-modal" class="hidden fixed bg-bgdeletemodal px-8 py-5 rounded-md translate-x-[-50%] translate-y-[-50%] top-[50%] left-[50%] flex gap-4 flex-col z-30">
+      <h3 class="text-gray-200 text-lg">Delete comment</h3>
+      <p class="text-gray-500 text-sm">Delete your comment permanently?</p>
+      <div class="ml-auto flex gap-6">
+        <button id="cancel-comment-deletion" class="text-blue-600 px-3 py-2 rounded-full hover:bg-blue-300 hover:bg-opacity-10">Cancel</button>
+        <button id="comment-deletion" class="text-red-600 px-3 py-2 rounded-full hover:bg-red-300 hover:bg-opacity-10">Delete</button>
+      </div>
+    </div>
+    <div id="delete-modal-overlay" class="fixed inset-0 bg-black opacity-50 hidden z-20"></div>
+
     <script type="module" src="./src/main.ts"></script>
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>

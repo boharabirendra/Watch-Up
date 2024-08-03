@@ -1,54 +1,37 @@
 import api from "../../utils/axiosInerceptor";
 
 export class ViewTracker {
-  viewThreshold = 5000;
-  videoPublicId: string;
-  videoElement: HTMLVideoElement;
-  viewTimeout: number | null = null;
+  private videoId: string;
+  private viewRecorded: boolean = false;
+  private viewThreshold: number = 5000; // 5 seconds
+  private timer: number | null = null;
 
-  constructor(videoElementId: HTMLVideoElement, videoPublicId: string) {
-    this.videoElement = videoElementId;
-    this.videoPublicId = videoPublicId;
-    this.setupTracking();
+  constructor(videoId: string) {
+    this.videoId = videoId;
   }
 
-  setupTracking() {
-    this.videoElement.addEventListener("play", () => {
-      this.startViewTimer();
-    });
-
-    this.videoElement.addEventListener("pause", () => {
-      this.clearViewTimer();
-    });
-
-    this.videoElement.addEventListener("ended", () => {
-      this.clearViewTimer();
-    });
-
-    this.videoElement.addEventListener("seeking", () => {
-      this.clearViewTimer();
-    });
-  }
-
-  startViewTimer() {
-    this.viewTimeout = window.setTimeout(() => {
-      this.recordView();
-    }, this.viewThreshold);
-  }
-
-  clearViewTimer() {
-    if (this.viewTimeout !== null) {
-      clearTimeout(this.viewTimeout);
-      this.viewTimeout = null;
+  startTracking() {
+    if (this.timer === null) {
+      this.timer = window.setTimeout(() => this.recordView(), this.viewThreshold);
     }
   }
 
-  async recordView() {
-    try {
-      await api.put(`/videos/update-views/${this.videoPublicId}`);
-    } catch (error) {
-      this.clearViewTimer();
-      console.log(error);
+  stopTracking() {
+    if (this.timer !== null) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+  }
+
+  private async recordView() {
+    if (!this.viewRecorded) {
+      try {
+        await api.put(`/videos/update-views/${this.videoId}`);
+        this.viewRecorded = true;
+        console.log(`View recorded for video ${this.videoId}`);
+      } catch (error) {
+        console.error(`Failed to record view for video ${this.videoId}:`, error);
+      }
     }
   }
 }
