@@ -14,7 +14,7 @@ WatchUp is a feature-rich video streaming platform that allows users to upload, 
   - Secure password hashing using bcryptjs
 
 - Video Management:
-  - Upload videos
+  - Upload videos, if he/she has CREATER role (here we have two role VIEWER & CREATER)
   - Set video privacy (public/private)
   - Delete own videos
   - User can see number of likes & comments on their videos
