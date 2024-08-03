@@ -33,7 +33,6 @@ export const createVideo = async (video: UploadVideo, userId: number) => {
 export const getVideos = async ({ q, size, page }: GetUserQuery) => {
   try {
     const videos = await VideoModel.getVideos({ q, size, page });
-    console.log({q, page, size});
     return videos;
   } catch (error) {
     logger.error(error);
@@ -103,9 +102,9 @@ export const getVideoByPublicId = async (videoPublicId: string) => {
   }
 };
 
-export const getMyVideos = async (userId: number) => {
+export const getMyVideos = async (userId: number, page: number, size: number) => {
   try {
-    const videos = await VideoModel.getMyVideos(userId);
+    const videos = await VideoModel.getMyVideos(userId, page, size);
     return videos;
   } catch (error) {
     logger.error(error);

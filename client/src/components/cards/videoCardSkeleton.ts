@@ -18,6 +18,10 @@ export const VideoSkeleton = () => `
   </div>
 `;
 
+const randomArray = [1, 2, 3, 4];
+
+export const myVideoSkeletonHTML = () => randomArray.map((item) => VideoSkeleton()).join("");
+
 export const generateSkeleton = () => {
   const skeletonHTML = skeletonNumberArray.map((item) => VideoSkeleton()).join("");
   return skeletonHTML;

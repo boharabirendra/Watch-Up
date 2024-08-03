@@ -1,8 +1,9 @@
+import { SIZE } from "../../constants/constants";
 import api from "../../utils/axiosInerceptor";
 
-export const getMyVideos = async () => {
+export const getMyVideos = async (page: number) => {
   try {
-    const response = await api.get(`/videos/myvidoes`);
+    const response = await api.get(`/videos/myvidoes?size=${SIZE}&page=${page}`);
     return response.data.data;
   } catch (error) {
     console.log(error);

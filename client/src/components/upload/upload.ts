@@ -2,7 +2,7 @@ import api from "../../utils/axiosInerceptor";
 import { spinnerStart, spinnerStop } from "../../utils/common";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const uploadSpinnerEl = document.getElementById("upload__spinner") as HTMLSpanElement;
+  const uploadSpinnerEl = document.getElementById("upload-spinner") as HTMLSpanElement;
   const uploadErrorEl = document.getElementById("upload-error") as HTMLParagraphElement;
   const uploadSuccessEl = document.getElementById("upload-success") as HTMLParagraphElement;
   const videoUploadFormEl = document.getElementById("videoUploadForm") as HTMLFormElement;

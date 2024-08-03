@@ -42984,3 +42984,107 @@ Argument `skip` is missing.
 2024-08-03 10:53:10 [error] []: Page must be a number
 2024-08-03 10:53:18 [error] []: Page must be a number
 2024-08-03 10:54:28 [error] []: Page must be a number
+2024-08-03 11:57:50 [error] []: Page must be a number
+2024-08-03 11:57:53 [error] []: Page must be a number
+2024-08-03 12:58:55 [error] []: Size must be a number
+2024-08-03 12:58:56 [error] []: Size must be a number
+2024-08-03 12:59:08 [error] []: Page must be a number
+2024-08-03 12:59:12 [error] []: Page must be a number
+2024-08-03 13:09:22 [error] []: Page must be a number
+2024-08-03 13:09:31 [error] []: Page must be a number
+2024-08-03 13:09:38 [error] []: Page must be a number
+2024-08-03 13:09:41 [error] []: Page must be a number
+2024-08-03 17:21:06 [error] []: 
+Invalid `prisma.comment.delete()` invocation in
+/home/birendra/fellowship/Watch-Up/server/src/models/comments.models.ts:23:31
+
+  20 };
+  21 
+  22 export const deleteCommentById = (id: number) => {
+→ 23   return prisma.comment.delete(
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+2024-08-03 17:21:06 [error] []: Error while deleting comment
+2024-08-03 17:49:33 [error] []: 
+Invalid `prisma.comment.delete()` invocation in
+/home/birendra/fellowship/Watch-Up/server/src/models/comments.models.ts:23:31
+
+  20 };
+  21 
+  22 export const deleteCommentById = (id: number) => {
+→ 23   return prisma.comment.delete(
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+2024-08-03 17:49:33 [error] []: Error while deleting comment
+2024-08-03 17:49:47 [error] []: 
+Invalid `prisma.comment.delete()` invocation in
+/home/birendra/fellowship/Watch-Up/server/src/models/comments.models.ts:23:31
+
+  20 };
+  21 
+  22 export const deleteCommentById = (id: number) => {
+→ 23   return prisma.comment.delete(
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+2024-08-03 17:49:47 [error] []: Error while deleting comment
+2024-08-03 17:50:32 [error] []: 
+Invalid `prisma.comment.delete()` invocation in
+/home/birendra/fellowship/Watch-Up/server/src/models/comments.models.ts:23:31
+
+  20 };
+  21 
+  22 export const deleteCommentById = (id: number) => {
+→ 23   return prisma.comment.delete(
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+2024-08-03 17:50:32 [error] []: 
+Invalid `prisma.comment.delete()` invocation in
+/home/birendra/fellowship/Watch-Up/server/src/models/comments.models.ts:23:31
+
+  20 };
+  21 
+  22 export const deleteCommentById = (id: number) => {
+→ 23   return prisma.comment.delete(
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+2024-08-03 17:50:32 [error] []: 
+Invalid `prisma.comment.delete()` invocation in
+/home/birendra/fellowship/Watch-Up/server/src/models/comments.models.ts:23:31
+
+  20 };
+  21 
+  22 export const deleteCommentById = (id: number) => {
+→ 23   return prisma.comment.delete(
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+2024-08-03 17:50:32 [error] []: Error while deleting comment
+2024-08-03 17:50:32 [error] []: Error while deleting comment
+2024-08-03 17:50:32 [error] []: Error while deleting comment
+2024-08-03 17:50:36 [error] []: 
+Invalid `prisma.comment.delete()` invocation in
+/home/birendra/fellowship/Watch-Up/server/src/models/comments.models.ts:23:31
+
+  20 };
+  21 
+  22 export const deleteCommentById = (id: number) => {
+→ 23   return prisma.comment.delete(
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+2024-08-03 17:50:36 [error] []: 
+Invalid `prisma.comment.delete()` invocation in
+/home/birendra/fellowship/Watch-Up/server/src/models/comments.models.ts:23:31
+
+  20 };
+  21 
+  22 export const deleteCommentById = (id: number) => {
+→ 23   return prisma.comment.delete(
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+2024-08-03 17:50:36 [error] []: 
+Invalid `prisma.comment.delete()` invocation in
+/home/birendra/fellowship/Watch-Up/server/src/models/comments.models.ts:23:31
+
+  20 };
+  21 
+  22 export const deleteCommentById = (id: number) => {
+→ 23   return prisma.comment.delete(
+An operation failed because it depends on one or more records that were required but not found. Record to delete does not exist.
+2024-08-03 17:50:36 [error] []: Error while deleting comment
+2024-08-03 17:50:36 [error] []: Error while deleting comment
+2024-08-03 17:50:36 [error] []: Error while deleting comment
+2024-08-03 17:54:51 [error] []: ENOENT: no such file or directory, unlink 'public/temp/8.jpg'
+2024-08-03 17:54:51 [error] []: Error while updating video detail
+2024-08-03 18:09:17 [error] []: Cannot read properties of null (reading 'secure_url')
+2024-08-03 18:09:17 [error] []: Error while updating video detail
