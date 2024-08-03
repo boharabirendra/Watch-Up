@@ -3,13 +3,11 @@ import { GetUserQuery } from "../interface/user.interface";
 import { IVideo, updateVideoInfo } from "../interface/video.interface";
 
 export const createVideo = (video: IVideo, userId: number) => {
-  return prisma.$transaction(async (tx) => {
-    const cVideo = await tx.video.create({
-      data: {
-        ...video,
-        userId,
-      },
-    });
+  return prisma.video.create({
+    data: {
+      ...video,
+      userId,
+    },
   });
 };
 
@@ -83,21 +81,37 @@ export const getVideoById = (id: number, userId: number) => {
 export const getVideoByPublicId = (videoPublicId: string) => {
   return prisma.video.findUnique({
     where: { videoPublicId },
-    include: {user: true}
+    include: {
+      user: {
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+          profileUrl: true,
+        },
+      },
+    },
   });
 };
 
-export const getSuggestionVideos = (videoPublicId: string, page: number) => {
+export const getSuggestionVideos = (videoPublicId: string, page: number, size: number) => {
   return prisma.video.findMany({
     where: {
       videoPublicId: { not: videoPublicId },
       isPublished: true,
     },
     include: {
-      user: true,
+      user: {
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+          profileUrl: true,
+        },
+      },
     },
-    skip: (page - 1) * 4,
-    take: 4,
+    skip: (page - 1) * size,
+    take: size,
   });
 };
 
@@ -105,7 +119,14 @@ export const getMyVideos = async (userId: number) => {
   return prisma.video.findMany({
     where: { userId },
     include: {
-      user: true,
+      user: {
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+          profileUrl: true,
+        },
+      },
       _count: { select: { userComment: true } },
     },
   });
@@ -129,6 +150,17 @@ export const unpublishVideo = (id: number) => {
     },
     where: {
       id,
+    },
+  });
+};
+
+export const getVideoViews = (videoPublicId: string) => {
+  return prisma.video.findUnique({
+    where: {
+      videoPublicId,
+    },
+    select: {
+      views: true,
     },
   });
 };

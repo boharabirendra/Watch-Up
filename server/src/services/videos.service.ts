@@ -33,6 +33,7 @@ export const createVideo = async (video: UploadVideo, userId: number) => {
 export const getVideos = async ({ q, size, page }: GetUserQuery) => {
   try {
     const videos = await VideoModel.getVideos({ q, size, page });
+    console.log({q, page, size});
     return videos;
   } catch (error) {
     logger.error(error);
@@ -40,9 +41,9 @@ export const getVideos = async ({ q, size, page }: GetUserQuery) => {
   }
 };
 
-export const getSuggestionVideos = async (videoPublicId: string, page: number) => {
+export const getSuggestionVideos = async (videoPublicId: string, page: number, size: number) => {
   try {
-    const videos = await VideoModel.getSuggestionVideos(videoPublicId, page);
+    const videos = await VideoModel.getSuggestionVideos(videoPublicId, page, size);
     return videos;
   } catch (error) {
     logger.error(error);
@@ -126,6 +127,17 @@ export const unpublishVideo = async (id: number) => {
     await VideoModel.unpublishVideo(id);
   } catch (error) {
     logger.error(error);
-    throw new InternalServerError("Error while un publishing video");
+    throw new InternalServerError("Error while unpublishing video");
   }
 };
+
+
+export const getVideoViews = async (videoPublicId: string) =>{
+  try {
+    const views = await VideoModel.getVideoViews(videoPublicId);
+    return views;
+  } catch (error) {
+    logger.error(error);
+    throw new InternalServerError("Error while fetching video views");
+  }
+}

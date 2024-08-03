@@ -91,7 +91,7 @@ export const getUserQuerySchema = Joi.object({
     "number.base": "Size must be a number",
     "number.min": "Size must be greater than or equal to 1",
     "number.max": "Size must be less than or equal to 10",
-  }).default(10),
+  }).default(12),
 }).options({
   stripUnknown: true,
 });

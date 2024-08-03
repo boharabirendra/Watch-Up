@@ -3,10 +3,10 @@ import prisma from "../db/prisma.db";
 export const getLikeStatus = (videoPublicId: string, userId: number) => {
   return prisma.userLike.findFirst({
     where: {
-      video: {
+      Video: {
         videoPublicId,
       },
-      user: {
+      User: {
         id: userId,
       },
     },
