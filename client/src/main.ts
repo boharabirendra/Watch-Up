@@ -6,14 +6,16 @@ import { VideoInfoCard } from "./components/cards/videoInfoCard";
 import { VideoPlayer } from "./components/videoplayer/videoPlayer";
 import { CommentInfoCard } from "./components/cards/commentInfoCard";
 
+import { getVideosViews } from "./components/likes/likes";
+import { likesHandler } from "./components/likes/likeHandler";
+
 import { generateSkeleton } from "./components/cards/videoCardSkeleton";
 import { logoutHandler, navbarHandler } from "./components/nav/navbarHandler";
 
-import { getVideosViews } from "./components/likes/likes";
-import { likesHandler } from "./components/likes/likeHandler";
+import { FilterVideoCard } from "./components/cards/filterVideoCard";
+import { generateLoadingSkeleton } from "./components/cards/videoPlayerSkeleton";
 import { handleComment, handleCommentDeletion, handleCommentEdit } from "./components/comments/commentHandler";
 import { fetchVideoById, fetchSuggestionVideos, generateFilterVideosHTML, fetchVideos } from "./components/videos/video";
-import { FilterVideoCard } from "./components/cards/filterVideoCard";
 
 class VideoController {
   private filter: string;
@@ -32,6 +34,7 @@ class VideoController {
   private videoInfoContainerElement: HTMLDivElement;
   private filterVideosContainerElement: HTMLDivElement;
   private videoCommentContainerElement: HTMLDivElement;
+  private playerVideosContainerElement: HTMLDivElement;
 
   constructor() {
     this.videoGridElement = document.getElementById("video-grid") as HTMLDivElement;
@@ -40,6 +43,7 @@ class VideoController {
     this.videoPlayerElement = document.getElementById("video-player") as HTMLDivElement;
     this.suggestedVideosElement = document.getElementById("suggested-videos") as HTMLDivElement;
     this.videoInfoContainerElement = document.getElementById("video-info-container") as HTMLDivElement;
+    this.playerVideosContainerElement = document.getElementById("video-player-container") as HTMLDivElement;
     this.filterVideosContainerElement = document.getElementById("filter-videos-container") as HTMLDivElement;
     this.videoCommentContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
 
@@ -72,6 +76,7 @@ class VideoController {
     this.videoPublicId = urlParams.get("v");
     const videoId = urlParams.get("videoId");
     if (this.videoPublicId && videoId) {
+      this.playerVideosContainerElement.innerHTML = generateLoadingSkeleton();
       this.videoId = videoId;
       this.loadVideo(this.videoPublicId);
     } else {
@@ -158,7 +163,7 @@ class VideoController {
 
   /**Render fileter videos */
   private async renderFilterVideoGrid(filter: string) {
-    this.videoGridElement.innerHTML = "";
+    this.videoGridElement.classList.add("hidden");
     const videos = await generateFilterVideosHTML(filter);
     this.filterVideosContainerElement.innerHTML = videos;
     this.filterVideosContainerElement.addEventListener("click", (event) => {

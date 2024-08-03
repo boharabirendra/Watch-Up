@@ -4,8 +4,7 @@ import { BASE_URL, SIZE } from "../../constants/constants";
 import { FilterVideoCard } from "../cards/filterVideoCard";
 
 export async function fetchVideos(filter: string, page:number = 1) {
-  const url = filter ? `${BASE_URL}/videos/get-videos?q=${filter}&size=${SIZE}&page=${page}` : `${BASE_URL}/videos/get-videos`;
-  console.log({filter, page});
+  const url = filter ? `${BASE_URL}/videos/get-videos?q=${filter}&size=${SIZE}&page=${page}` : `${BASE_URL}/videos/get-videos?page=${page}`;
   try {
     const response = await axios.get(url);
     const videosArray: IVideo[] = response.data.data;

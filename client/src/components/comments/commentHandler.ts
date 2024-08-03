@@ -12,7 +12,7 @@ export const handleComment = () => {
   const commentInputBoxElement = document.getElementById("comment-input-box") as HTMLTextAreaElement;
   const commentsContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
 
-  // Define the submit comment handler
+ 
   const handleSubmitComment = async () => {
     if (!(await mustLoginMessage())) return;
     const formData = new FormData();
@@ -41,7 +41,7 @@ export const handleComment = () => {
     } finally {
       setTimeout(() => {
         commentMessageElement.innerHTML = "";
-      }, 4000);
+      }, 3000);
     }
   };
 
@@ -87,7 +87,6 @@ export const handleCommentDeletion = () => {
   const handleDeleteClick = async () => {
     if (currentCommentId) {
       try {
-        console.log(currentCommentId);
         await deleteComment(currentCommentId);
         await reRenderComments();
         toggleDeletionModal();
@@ -162,4 +161,5 @@ export const reRenderComments = async () => {
   const commentsContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
   const comments = await getComments(videoId);
   commentsContainerElement.innerHTML = CommentInfoCard(comments);
+  handleComment();
 };
