@@ -19,7 +19,7 @@ export const VideoInfoCard = (video: IVideo) => `
               <div>
                 <p>@${video.user.fullName}</p>
                 <div class="flex gap-3 text-sm text-gray-400">
-                  <p>${video.views} views</p>
+                  <p id="video-views">${video.views} views</p>
                   <p>${timeAndDateFormater(video.createdAt)}</p>
                 </div>
               </div>

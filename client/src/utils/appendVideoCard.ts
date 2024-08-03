@@ -17,14 +17,14 @@ export const appendVideoCard = (video: IVideo) => {
       </div>
       <div class="mt-4 flex items-start">
         <div class="flex-shrink-0"> 
-          <img src="${video.userVideos[0].profileUrl || "/public/sample.jpeg"}" class="h-8 w-8 rounded-full object-cover" alt="${video.userVideos[0].email}" />
+          <img src="${video.user.profileUrl || "/public/sample.jpeg"}" class="h-8 w-8 rounded-full object-cover" alt="${video.user.email}" />
         </div>
         <div class="ml-3 flex-1">
           <h4 class="text-sm font-semibold text-gray-200 line-clamp-2 leading-5 group-hover:text-blue-400 transition-colors duration-300">
             ${video.title}
           </h4>
           <p class="text-xs text-gray-400 mt-1 hover:text-gray-300 transition-colors duration-300">
-            ${video.userVideos[0].email}
+            ${video.user.email}
           </p>
           <div class="text-xs text-gray-500 mt-1 flex gap-3">
             <p>${formatViews(video.views)} views</p>
