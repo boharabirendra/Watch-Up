@@ -16,7 +16,7 @@ const router = Router();
 /**GET request */
 router.route("/get-video/:id").get(authenticate, VideoController.getVideoById);
 router.route("/get-suggestion-vidoes").get(VideoController.getSuggestionVideos);
-router.route("/views/:videoPublicId").get(authenticate, VideoController.getVideosViews);
+router.route("/views/:videoPublicId").get(VideoController.getVideosViews);
 router.route("/get-video/public/:videoPublicId").get(VideoController.getVideoByPublicId);
 router.route("/get-videos").get(validateReqQuery(getUserQuerySchema), VideoController.getVideos);
 router.route("/myvidoes").get(authenticate, validateReqQuery(getUserQuerySchema), VideoController.getMyVideos);
