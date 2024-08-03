@@ -55,8 +55,8 @@ CREATE TABLE "UserComment" (
 -- CreateTable
 CREATE TABLE "UserLike" (
     "id" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
-    "videoId" INTEGER NOT NULL,
+    "userId" INTEGER,
+    "videoId" INTEGER,
 
     CONSTRAINT "UserLike_pkey" PRIMARY KEY ("id")
 );
@@ -89,7 +89,7 @@ ALTER TABLE "UserComment" ADD CONSTRAINT "UserComment_videoId_fkey" FOREIGN KEY 
 ALTER TABLE "UserComment" ADD CONSTRAINT "UserComment_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "Comment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserLike" ADD CONSTRAINT "UserLike_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "UserLike" ADD CONSTRAINT "UserLike_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserLike" ADD CONSTRAINT "UserLike_videoId_fkey" FOREIGN KEY ("videoId") REFERENCES "Video"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "UserLike" ADD CONSTRAINT "UserLike_videoId_fkey" FOREIGN KEY ("videoId") REFERENCES "Video"("id") ON DELETE SET NULL ON UPDATE CASCADE;

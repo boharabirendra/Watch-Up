@@ -1,4 +1,5 @@
 import { MyVideoCard } from "../cards/myvideosCard";
+import { generateSkeleton } from "../cards/videoCardSkeleton";
 import { deleteVideoById, editVideoDetails, fetchVideoById, getMyVideos, publishVideo, unpublishVideo } from "./myvideos";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -72,6 +73,7 @@ function deleteVideo(deleteVideoElement: HTMLButtonElement) {
 
 async function renderVideos() {
   const myVideosContainerElement = document.getElementById("myvideo-container") as HTMLDivElement;
+  myVideosContainerElement.innerHTML = generateSkeleton();
   const myVideos: any = await getMyVideos();
   if (!myVideos.length) {
     myVideosContainerElement.innerHTML = "No, videos found!";
@@ -94,7 +96,6 @@ async function editVideoDetail(editVideoElement: HTMLButtonElement) {
 
   const videoId = editVideoElement.getAttribute("data-videoId");
   if (videoId) {
-    console.log(videoId);
     const videoDetail = await fetchVideoById(videoId);
     titleInputElement.value = videoDetail.title;
     descriptionElement.value = videoDetail.description;

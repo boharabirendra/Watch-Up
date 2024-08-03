@@ -1,21 +1,28 @@
 import { IVideo } from "./interface/videoCard";
+import { appendVideoCard } from "./utils/appendVideoCard";
 import { getComments } from "./components/comments/comment";
 import { ViewTracker } from "./components/views/viewTracker";
-import { VideoPlayer } from "./components/videoplayer/videoPlayer";
 import { VideoInfoCard } from "./components/cards/videoInfoCard";
+import { VideoPlayer } from "./components/videoplayer/videoPlayer";
 import { CommentInfoCard } from "./components/cards/commentInfoCard";
 
 import { generateSkeleton } from "./components/cards/videoCardSkeleton";
 import { logoutHandler, navbarHandler } from "./components/nav/navbarHandler";
 
-import { fetchVideos, fetchVideoById, fetchSuggestionVideos, generateSuggestedVideoHtml } from "./components/videos/video";
-import { likesHandler, handleComment, handleCommentDeletion, handleCommentEdit } from "./mainHandler";
-import { appendVideoCard } from "./utils/appendVideoCard";
+import { getVideosViews } from "./components/likes/likes";
+import { likesHandler } from "./components/likes/likeHandler";
+import { handleComment, handleCommentDeletion, handleCommentEdit } from "./components/comments/commentHandler";
+import { fetchVideoById, fetchSuggestionVideos, generateFilterVideosHTML, fetchVideos } from "./components/videos/video";
+import { FilterVideoCard } from "./components/cards/filterVideoCard";
 
 class VideoController {
-  private page: number;
   private filter: string;
   private videoId: string;
+  private gridPage: number;
+  private filterPage: number;
+  private hasMoreData: boolean;
+  private suggestionPage: number;
+  private viewUpdateTimer: number;
   private videoPublicId: string | null;
   private videoGridElement: HTMLDivElement;
   private mainVideoElement: HTMLVideoElement;
@@ -23,6 +30,7 @@ class VideoController {
   private videoSearchElement: HTMLInputElement;
   private suggestedVideosElement: HTMLDivElement;
   private videoInfoContainerElement: HTMLDivElement;
+  private filterVideosContainerElement: HTMLDivElement;
   private videoCommentContainerElement: HTMLDivElement;
 
   constructor() {
@@ -32,14 +40,21 @@ class VideoController {
     this.videoPlayerElement = document.getElementById("video-player") as HTMLDivElement;
     this.suggestedVideosElement = document.getElementById("suggested-videos") as HTMLDivElement;
     this.videoInfoContainerElement = document.getElementById("video-info-container") as HTMLDivElement;
+    this.filterVideosContainerElement = document.getElementById("filter-videos-container") as HTMLDivElement;
     this.videoCommentContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
 
-    this.page = 1;
     this.filter = "";
     this.videoId = "";
+    this.gridPage = 1;
+    this.filterPage = 1;
+    this.hasMoreData = true;
+    this.suggestionPage = 1;
     this.videoPublicId = "";
-    
-    window.addEventListener("scroll", this.handleInfiniteScroll);
+    this.viewUpdateTimer = 0;
+
+    window.addEventListener("scroll", this.handleGridVideoInfiniteScroll);
+    window.addEventListener("scroll", this.handleFilterVideoInfiniteScroll);
+    window.addEventListener("scroll", this.handleSuggestedVideoInfiniteScroll);
 
     this.init();
   }
@@ -48,20 +63,8 @@ class VideoController {
     this.videoGridElement.innerHTML = generateSkeleton();
     this.renderVideoGrid(this.filter);
     this.loadFromUrl();
+    this.filterVideos();
     window.addEventListener("popstate", () => this.loadFromUrl());
-  }
-
-  private async renderVideoGrid(filter: string) {
-    const videos = await fetchVideos(filter);
-    this.videoGridElement.innerHTML = videos;
-    this.videoGridElement.addEventListener("click", (event) => {
-      const videoItem = (event.target as HTMLElement).closest(".video-item");
-      if (videoItem) {
-        this.videoPublicId = videoItem.getAttribute("data-videoPublicId");
-        this.videoId = videoItem.getAttribute("data-videoId")!;
-        this.loadVideo(this.videoPublicId!);
-      }
-    });
   }
 
   private loadFromUrl(): void {
@@ -73,12 +76,14 @@ class VideoController {
       this.loadVideo(this.videoPublicId);
     } else {
       this.showVideoGrid();
+      clearInterval(this.viewUpdateTimer);
     }
   }
 
   private async loadVideo(videoPublicId: string) {
     const video = await fetchVideoById(videoPublicId);
     if (video) {
+      this.hasMoreData = true;
       this.showVideoPlayer();
       this.playVideo(video.playbackUrl, videoPublicId);
       this.loadVideoInfo(video);
@@ -101,17 +106,46 @@ class VideoController {
   private showVideoPlayer(): void {
     this.videoGridElement.classList.add("hidden");
     this.videoPlayerElement.classList.remove("hidden");
+    this.filterVideosContainerElement.classList.add("hidden");
   }
 
   private playVideo(videoUrl: string, videoPublicId: string): void {
     new VideoPlayer(this.mainVideoElement, videoUrl);
     new ViewTracker(this.mainVideoElement, videoPublicId);
+    this.suggestionPage = 1;
+    this.viewUpdateTimer = setInterval(async () => {
+      await this.viewsUpdator();
+    }, 12000);
     window.scrollTo(0, 0);
   }
 
+  /**Render initial videos */
+  private async renderVideoGrid(filter: string) {
+    const videos = await fetchVideos(filter);
+    this.videoGridElement.innerHTML = "";
+    if (videos.length === 0) this.hasMoreData = false;
+    for (let i = 0; i < videos.length; i++) {
+      const newVideo = appendVideoCard(videos[i]);
+      this.videoGridElement.appendChild(newVideo);
+    }
+    this.videoGridElement.addEventListener("click", (event) => {
+      const videoItem = (event.target as HTMLElement).closest(".video-item");
+      if (videoItem) {
+        this.videoPublicId = videoItem.getAttribute("data-videoPublicId");
+        this.videoId = videoItem.getAttribute("data-videoId")!;
+        this.loadVideo(this.videoPublicId!);
+      }
+    });
+  }
+
+  /**Render suggested videos */
   private async renderSuggestedVideos(currentVideoId: string) {
-    const videos = await generateSuggestedVideoHtml(currentVideoId, this.page);
-    this.suggestedVideosElement.innerHTML = videos;
+    const videos = await fetchSuggestionVideos(currentVideoId, this.suggestionPage);
+    if (videos.length === 0) this.hasMoreData = false;
+    for (let i = 0; i < videos.length; i++) {
+      const newVideo = appendVideoCard(videos[i]);
+      this.suggestedVideosElement.appendChild(newVideo);
+    }
     this.suggestedVideosElement.addEventListener("click", (e) => {
       const videoItem = (e.target as HTMLElement).closest(".video-item");
       if (videoItem) {
@@ -122,22 +156,72 @@ class VideoController {
     });
   }
 
-  private handleInfiniteScroll = () => {
-    const endOfPage = window.innerHeight + window.pageYOffset >= (document.body.offsetHeight - 100);
+  /**Render fileter videos */
+  private async renderFilterVideoGrid(filter: string) {
+    this.videoGridElement.innerHTML = "";
+    const videos = await generateFilterVideosHTML(filter);
+    this.filterVideosContainerElement.innerHTML = videos;
+    this.filterVideosContainerElement.addEventListener("click", (event) => {
+      const videoItem = (event.target as HTMLElement).closest(".video-item");
+      if (videoItem) {
+        this.videoPublicId = videoItem.getAttribute("data-videoPublicId");
+        this.videoId = videoItem.getAttribute("data-videoId")!;
+        this.loadVideo(this.videoPublicId!);
+      }
+    });
+  }
+
+  private handleSuggestedVideoInfiniteScroll = () => {
+    const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
     if (endOfPage) {
-      this.loadMoreSuggestedVideos(++this.page);
+      this.loadMoreSuggestedVideos(++this.suggestionPage);
     }
   };
 
+  private handleFilterVideoInfiniteScroll = () => {
+    const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
+    if (endOfPage) {
+      this.loadMoreFilteredVideos(++this.filterPage);
+    }
+  };
+
+  private handleGridVideoInfiniteScroll = () => {
+    const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
+    if (endOfPage) {
+      this.loadMoreGridVideos(++this.gridPage);
+    }
+  };
+
+
   private async loadMoreSuggestedVideos(page: number) {
     if (!this.videoPublicId) return;
+    if (!this.hasMoreData) return;
     const videos = await fetchSuggestionVideos(this.videoPublicId, page);
+    if (videos.length === 0) this.hasMoreData = false;
     for (let i = 0; i < videos.length; i++) {
       const newVideo = appendVideoCard(videos[i]);
       this.suggestedVideosElement.appendChild(newVideo);
     }
   }
-  
+
+  private async loadMoreFilteredVideos(page: number) {
+    if (!this.filter) return;
+    if (!this.hasMoreData) return;
+    const videos = await fetchVideos(this.filter, page);
+    if (videos.length === 0) this.hasMoreData = false;
+    const newVideo = videos.map((video) => FilterVideoCard(video)).join("");
+    this.filterVideosContainerElement.insertAdjacentHTML("beforeend", newVideo);
+  }
+
+  private async loadMoreGridVideos(gridPage: number) {
+    if (!this.hasMoreData) return;
+    const videos = await fetchVideos(this.filter, gridPage);
+    if (videos.length === 0) this.hasMoreData = false;
+    for (let i = 0; i < videos.length; i++) {
+      const newVideo = appendVideoCard(videos[i]);
+      this.videoGridElement.appendChild(newVideo);
+    }
+  }
 
   private loadVideoInfo(video: IVideo) {
     this.videoInfoContainerElement.innerHTML = VideoInfoCard(video);
@@ -153,9 +237,20 @@ class VideoController {
       if (event.key === "Enter") {
         this.filter = this.videoSearchElement.value.trim();
         if (this.filter === "") return;
-        this.renderVideoGrid(this.filter);
+        this.filterPage = 1;
+        this.renderFilterVideoGrid(this.filter);
       }
     });
+  }
+
+  private async viewsUpdator() {
+    const viewElement = document.getElementById("video-views") as HTMLParagraphElement;
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoPublicId = urlParams.get("v");
+    if (videoPublicId && viewElement) {
+      const views = await getVideosViews(videoPublicId);
+      viewElement.innerHTML = views.views + " views";
+    }
   }
 }
 
@@ -163,13 +258,25 @@ new VideoController();
 navbarHandler();
 logoutHandler();
 
-/**Adding shortcut */
 document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar") as HTMLDivElement;
+  const overlay = document.getElementById("overlay") as HTMLDivElement;
   const videoSearchElement = document.getElementById("search") as HTMLInputElement;
+  const sidebarToggle = document.getElementById("sidebar-toggle") as HTMLButtonElement;
+
   document.addEventListener("keydown", (event) => {
     if (event.key === "/") {
       event.preventDefault();
       videoSearchElement.focus();
     }
   });
+
+  /**toggle sidbar */
+  sidebarToggle.addEventListener("click", toggleSidebar);
+  overlay.addEventListener("click", toggleSidebar);
+
+  function toggleSidebar() {
+    sidebar.classList.toggle("-translate-x-full");
+    overlay.classList.toggle("hidden");
+  }
 });

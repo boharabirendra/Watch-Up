@@ -7,7 +7,6 @@ import { AuthRequest } from "../interface/auth.interface";
 import * as VideoService from "../services/videos.service";
 import { catchAsyncError } from "../utils/catchError.utils";
 
-
 export const createVideo = catchAsyncError(async (req: AuthRequest, res: Response) => {
   const { id: userId } = req.user;
   const { title, description } = req.body;
@@ -33,8 +32,8 @@ export const getVideos = catchAsyncError(async (req: Request<any, any, any, any>
 });
 
 export const getSuggestionVideos = catchAsyncError(async (req: Request<any, any, any, any>, res: Response) => {
-  const { videoPublicId, page } = req.query;
-  const videos = await VideoService.getSuggestionVideos(videoPublicId, Number(page));
+  const { videoPublicId, page, size } = req.query;
+  const videos = await VideoService.getSuggestionVideos(videoPublicId, Number(page), Number(size));
   res.status(HttpStatusCode.OK).json(new ApiResponse("Videos list", videos));
 });
 
@@ -93,4 +92,10 @@ export const unpublishVideo = catchAsyncError(async (req: Request, res: Response
   const { id } = req.params;
   await VideoService.unpublishVideo(Number(id));
   res.status(HttpStatusCode.OK).json(new ApiResponse("Video unpublished successfully"));
+});
+
+export const getVideosViews = catchAsyncError(async (req: Request, res: Response) => {
+  const { videoPublicId } = req.params;
+  const views = await VideoService.getVideoViews(videoPublicId);
+  res.status(HttpStatusCode.OK).json(new ApiResponse("Video views", views));
 });

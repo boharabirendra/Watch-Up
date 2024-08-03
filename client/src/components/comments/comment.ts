@@ -15,7 +15,6 @@ export const createComment = async (formData: FormData) => {
 export const getComments = async (videoId: string) => {
   try {
     const response = await api.get(`/comments/get-comments/${videoId}`);
-    console.log(response.data.data);
     return response.data.data;
   } catch (error) {
     console.log(error);

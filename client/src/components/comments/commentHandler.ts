@@ -1,10 +1,8 @@
-import { mustLoginMessage } from "./utils/common";
-import { CommentInfoCard } from "./components/cards/commentInfoCard";
-import { EditTextareaCard } from "./components/cards/editTextAreaCard";
-import { getLikeStatus, updateLikeCount } from "./components/likes/likes";
-import { createComment, deleteComment, getComments, updateComment } from "./components/comments/comment";
+import { mustLoginMessage } from "../../utils/common";
+import { CommentInfoCard } from "../cards/commentInfoCard";
+import { EditTextareaCard } from "../cards/editTextAreaCard";
+import { createComment, deleteComment, getComments, updateComment } from "./comment";
 
-/**Comment event section */
 export const handleComment = () => {
   // Get elements
   const addCommentElement = document.getElementById("add-comment") as HTMLDivElement;
@@ -12,9 +10,10 @@ export const handleComment = () => {
   const submitCommentElement = document.getElementById("submit-comment") as HTMLButtonElement;
   const commentMessageElement = document.getElementById("comment-message") as HTMLParagraphElement;
   const commentInputBoxElement = document.getElementById("comment-input-box") as HTMLTextAreaElement;
+  const commentsContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
 
-  /**Create comment api call */
-  submitCommentElement.addEventListener("click", async () => {
+  // Define the submit comment handler
+  const handleSubmitComment = async () => {
     if (!(await mustLoginMessage())) return;
     const formData = new FormData();
     const urlParams = new URLSearchParams(window.location.search);
@@ -29,11 +28,11 @@ export const handleComment = () => {
       commentMessageElement.innerHTML = "Comment added successfully";
       commentInputBoxElement.value = "";
 
-      /**Rerending comments after, comment add by user */
+      // Rerender comments after comment is added
       setTimeout(async () => {
-        const commentsContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
         const comments = await getComments(videoId);
         commentsContainerElement.innerHTML = CommentInfoCard(comments);
+        submitCommentElement.removeEventListener("click", handleSubmitComment);
         handleComment();
       }, 1000);
     } catch (error: any) {
@@ -44,7 +43,9 @@ export const handleComment = () => {
         commentMessageElement.innerHTML = "";
       }, 4000);
     }
-  });
+  };
+
+  submitCommentElement.addEventListener("click", handleSubmitComment);
 
   const updateSubmitButtonState = () => {
     const isEmpty = commentInputBoxElement.value.trim() === "";
@@ -57,6 +58,7 @@ export const handleComment = () => {
       submitCommentElement.classList.remove("bg-gray-400", "text-gray-500", "cursor-not-allowed");
     }
   };
+
   commentInputBoxElement.addEventListener("input", () => {
     addCommentElement.classList.remove("hidden");
     updateSubmitButtonState();
@@ -67,8 +69,10 @@ export const handleComment = () => {
     commentInputBoxElement.value = "";
     updateSubmitButtonState();
   });
+
   updateSubmitButtonState();
 };
+
 
 /**Comment deletion */
 export const handleCommentDeletion = () => {
@@ -77,43 +81,46 @@ export const handleCommentDeletion = () => {
   const deleteCommentOverylayElement = document.getElementById("delete-modal-overlay") as HTMLDivElement;
   const alterCommentContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
   const cancelCommentDeletionElement = document.getElementById("cancel-comment-deletion") as HTMLButtonElement;
+  
+  let currentCommentId: string | null = null;
 
-  alterCommentContainerElement.addEventListener("click", async (event) => {
+  const handleDeleteClick = async () => {
+    if (currentCommentId) {
+      try {
+        console.log(currentCommentId);
+        await deleteComment(currentCommentId);
+        await reRenderComments();
+        toggleDeletionModal();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  alterCommentContainerElement.addEventListener("click", (event) => {
     const commentItem = (event.target as HTMLElement).closest("#delete-comment");
     if (commentItem) {
       commentDeleteModalElement.classList.remove("hidden");
       deleteCommentOverylayElement.classList.remove("hidden");
-      const commentId = commentItem.getAttribute("data-commentId");
-      if (commentId) {
-        try {
-          confirmCommentDeleteElement.addEventListener("click", async () => {
-            await deleteComment(commentId);
-            await reRenderComments();
-            commentDeleteModalElement.classList.add("hidden");
-            deleteCommentOverylayElement.classList.add("hidden");
-          });
-        } catch (error) {
-          console.log(error);
-        }
-      }
+      currentCommentId = commentItem.getAttribute("data-commentId");
     }
   });
 
-  cancelCommentDeletionElement.addEventListener("click", () => {
-    toggleDeletionModal();
-  });
+  confirmCommentDeleteElement.addEventListener("click", handleDeleteClick);
 
-  deleteCommentOverylayElement.addEventListener("click", () => {
-    toggleDeletionModal();
-  });
+  cancelCommentDeletionElement.addEventListener("click", toggleDeletionModal);
+
+  deleteCommentOverylayElement.addEventListener("click", toggleDeletionModal);
 
   function toggleDeletionModal() {
     deleteCommentOverylayElement.classList.add("hidden");
     commentDeleteModalElement.classList.add("hidden");
+    currentCommentId = null; 
   }
 };
 
-/**Comment deletion */
+
+/**Comment edition */
 export const handleCommentEdit = () => {
   const alterCommentContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
 
@@ -155,60 +162,4 @@ export const reRenderComments = async () => {
   const commentsContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
   const comments = await getComments(videoId);
   commentsContainerElement.innerHTML = CommentInfoCard(comments);
-  handleCommentDeletion();
-  handleComment();
 };
-
-/**Like event section */
-export const likesHandler = async () => {
-  const likeButton = document.getElementById("likeButton") as HTMLButtonElement;
-  const likePath = document.getElementById("likePath") as any;
-  const likeCount = document.getElementById("likeCount") as HTMLSpanElement;
-
-  const updateLikeUI = (liked: boolean) => {
-    if (liked) {
-      likePath.setAttribute("fill", "#065fd4");
-      likePath.setAttribute("stroke", "#065fd4");
-    } else {
-      likePath.setAttribute("fill", "none");
-      likePath.setAttribute("stroke", "currentColor");
-    }
-  };
-  const searchParams = new URLSearchParams(window.location.search);
-  const videoPublicId = searchParams.get("v");
-
-  let isLiked: any;
-  if (videoPublicId) {
-    isLiked = await getLikeStatus(videoPublicId);
-    updateLikeUI(isLiked ? true : false);
-  }
-
-  likeButton.addEventListener("click", async () => {
-    if (!(await mustLoginMessage())) return;
-    const searchParams = new URLSearchParams(window.location.search);
-    const videoPublicId = searchParams.get("v");
-    if (videoPublicId) {
-      const response = await updateLikeCount(videoPublicId);
-      updateLikeUI(response.liked);
-      likeCount.innerHTML = response.likes;
-    }
-    likeButton.classList.add("scale-110");
-    setTimeout(() => {
-      likeButton.classList.remove("scale-110");
-    }, 200);
-  });
-};
-
-document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar") as HTMLDivElement;
-  const overlay = document.getElementById("overlay") as HTMLDivElement;
-  const sidebarToggle = document.getElementById("sidebar-toggle") as HTMLButtonElement;
-
-  sidebarToggle.addEventListener("click", toggleSidebar);
-  overlay.addEventListener("click", toggleSidebar);
-
-  function toggleSidebar() {
-    sidebar.classList.toggle("-translate-x-full");
-    overlay.classList.toggle("hidden");
-  }
-});

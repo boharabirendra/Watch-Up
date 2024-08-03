@@ -1,5 +1,4 @@
 import api from "../../utils/axiosInerceptor";
-import { BASE_URL } from "../../constants/constants";
 
 export const getLikeStatus = async (videoPublicId: string) => {
   try {
@@ -13,6 +12,15 @@ export const getLikeStatus = async (videoPublicId: string) => {
 export const updateLikeCount = async (videoPublicId: string) => {
   try {
     const response = await api.put(`/likes/update-like/${videoPublicId}`);
+    return response.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getVideosViews = async (videoPublicId: string) => {
+  try {
+    const response = await api.get(`/videos/views/${videoPublicId}`);
     return response.data.data;
   } catch (error) {
     console.log(error);
