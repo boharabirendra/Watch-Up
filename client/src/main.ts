@@ -110,6 +110,7 @@ class VideoController {
       handleComment();
       handleCommentEdit();
       handleCommentDeletion();
+      this.setupCopyUrlButton();
     }
   }
 
@@ -317,6 +318,35 @@ class VideoController {
     if (this.viewUpdateInterval !== null) {
       clearInterval(this.viewUpdateInterval);
       this.viewUpdateInterval = null;
+    }
+  }
+
+  /**Copu current url */
+  private copyCurrentUrlToClipboard(): void {
+    const shareMsgElement = document.getElementById("share-msg") as HTMLSpanElement;
+    const currentUrl: string = window.location.href;
+    navigator.clipboard
+      .writeText(currentUrl)
+      .then(() => {
+        shareMsgElement.innerHTML = "Copied";
+        shareMsgElement.classList.add("text-semibold");
+        setTimeout(() => {
+          shareMsgElement.innerHTML = "Copy link";
+          shareMsgElement.classList.remove("text-semibold");
+        }, 1500);
+      })
+      .catch((err) => {
+        console.error("Failed to copy URL: ", err);
+      });
+  }
+  private setupCopyUrlButton(): void {
+    const copyUrlButton = document.getElementById("share-btn") as HTMLButtonElement;
+    if (copyUrlButton) {
+      copyUrlButton.addEventListener("click", () => {
+        this.copyCurrentUrlToClipboard();
+      });
+    } else {
+      console.error("Copy URL button not found");
     }
   }
 }
