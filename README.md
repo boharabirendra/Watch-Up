@@ -58,6 +58,11 @@ WatchUp is a feature-rich video streaming platform that allows users to upload, 
 - Validation:
 
   - Joi
+- Testing:
+
+  - sinon
+  - mocha
+  - expect
 
 - Authentication:
   - JSON Web Tokens (JWT)
