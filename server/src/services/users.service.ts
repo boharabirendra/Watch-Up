@@ -9,8 +9,7 @@ import { generateAccessAndRefreshToken } from "../utils/generateTokens.utils";
 import { generateHashedPassword } from "../utils/generateHashedPassword.utils";
 
 import { IUser, UserArgs, UpdateUser, ChangePassword, LoginCredentials, UpdaterUserProfile } from "../interface/user.interface";
-import { ConflictError,  BadRequestError, InternalServerError, UnauthenticatedError } from "../errors/error.error";
-
+import { ConflictError, BadRequestError, InternalServerError, UnauthenticatedError, NotFoundError } from "../errors/error.error";
 
 const logger = loggerWithNameSpace("[User Service]:");
 
@@ -20,7 +19,11 @@ export const registerUser = async (user: IUser) => {
   if (existingUser) throw new ConflictError(`User already exists.`);
 
   try {
-    const [password, uResponse] = await Promise.all([generateHashedPassword(user.password), user.profileUrl ? uploadImageOnCloudinary(user.profileUrl) : null]);
+    let uResponse;
+    const password = await generateHashedPassword(user.password);
+    if (user.profileUrl) {
+      uResponse = await uploadImageOnCloudinary(user.profileUrl);
+    }
 
     await UserModel.registerUser({
       ...user,
@@ -37,7 +40,7 @@ export const registerUser = async (user: IUser) => {
 /**login user */
 export const loginUser = async ({ email, password }: LoginCredentials) => {
   const existingUser = await isUserExists({ email });
-  if (!existingUser) throw new ApiResponse(`Invalid password or email`);
+  if (!existingUser) throw new NotFoundError(`Invalid password or email`);
   if (!(await isPasswordValid(password, existingUser.password))) throw new UnauthenticatedError("Invalid password or email");
 
   const payload = {
@@ -61,7 +64,7 @@ export const loginUser = async ({ email, password }: LoginCredentials) => {
 /**change password */
 export const changePassword = async ({ id, oldPassword, newPassword }: ChangePassword) => {
   const existingUser = await isUserExists({ id });
-  if (!existingUser) throw new ApiResponse("User does not exist.");
+  if (!existingUser) throw new NotFoundError("User does not exist.");
   if (!(await isPasswordValid(oldPassword, existingUser.password))) throw new BadRequestError("Invalid old password");
 
   try {
@@ -124,10 +127,10 @@ export const updateUserProfile = async ({ id, profileUrl }: UpdaterUserProfile) 
 };
 
 /*password matcher */
-const isPasswordValid = (plainPassword: string, hashedPassword: string) => bcryptjs.compare(plainPassword, hashedPassword);
+export const isPasswordValid = (plainPassword: string, hashedPassword: string) => bcryptjs.compare(plainPassword, hashedPassword);
 
 /**user existence checker */
-const isUserExists = async ({ id, email }: UserArgs) => {
+export const isUserExists = async ({ id, email }: UserArgs) => {
   try {
     return id ? UserModel.getUserById(id) : email ? UserModel.getUserByEmail(email) : null;
   } catch (error) {
