@@ -37,6 +37,7 @@ class VideoController {
 
   private mainVideoElement: HTMLVideoElement;
   private videoSearchElement: HTMLInputElement;
+  private searchBtnElement: HTMLButtonElement;
 
   private videoGridElement: HTMLDivElement;
   private videoPlayerElement: HTMLDivElement;
@@ -48,6 +49,7 @@ class VideoController {
   constructor() {
     this.videoGridElement = document.getElementById("video-grid") as HTMLDivElement;
     this.videoSearchElement = document.getElementById("search") as HTMLInputElement;
+    this.searchBtnElement = document.getElementById("search-btn") as HTMLButtonElement;
     this.mainVideoElement = document.getElementById("main-video") as HTMLVideoElement;
     this.videoPlayerElement = document.getElementById("video-player") as HTMLDivElement;
     this.suggestedVideosElement = document.getElementById("suggested-videos") as HTMLDivElement;
@@ -76,7 +78,8 @@ class VideoController {
     this.videoGridElement.innerHTML = generateSkeleton();
     this.loadFromUrl();
     this.renderVideoGrid(this.filter);
-    this.filterVideos();
+    this.searchVideosByEnter();
+    this.searchVideosUsingBtn();
     window.addEventListener("popstate", () => this.loadFromUrl());
   }
 
@@ -187,17 +190,27 @@ class VideoController {
       }
     });
   }
-  private filterVideos() {
+  private searchVideosByEnter() {
     this.videoSearchElement.addEventListener("keydown", async (event) => {
       if (event.key === "Enter") {
-        this.showFilterVideoGrid();
-        this.mainVideoElement.pause();
-        this.mainVideoElement.currentTime = 0;
-        this.filter = this.videoSearchElement.value.trim();
-        if (this.filter === "") return;
-        this.filterPage = 1;
-        this.renderFilterVideoGrid(this.filter);
+        this.filterVideos();
       }
+    });
+  }
+
+  private filterVideos() {
+    this.showFilterVideoGrid();
+    this.mainVideoElement.pause();
+    this.mainVideoElement.currentTime = 0;
+    this.filter = this.videoSearchElement.value.trim();
+    if (this.filter === "") return;
+    this.filterPage = 1;
+    this.renderFilterVideoGrid(this.filter);
+  }
+
+  private searchVideosUsingBtn() {
+    this.searchBtnElement.addEventListener("click", () => {
+      this.filterVideos();
     });
   }
 
@@ -208,7 +221,7 @@ class VideoController {
 
   /**Loading data with scroll event listener */
   private handleInfiniteScroll = () => {
-    const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
+    const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight - 100;
     if (endOfPage) {
       switch (this.currentView) {
         case CurrentView.Grid:
@@ -277,7 +290,6 @@ class VideoController {
 
   /**Video player */
   private playVideo(videoUrl: string, videoPublicId: string): void {
-    console.log(`Playing video: ${videoPublicId}`);
     this.mainVideoElement.pause();
     this.mainVideoElement.currentTime = 0;
     if (this.currentViewTracker) {

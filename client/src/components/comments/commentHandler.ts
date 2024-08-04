@@ -12,8 +12,9 @@ export const handleComment = () => {
   const commentInputBoxElement = document.getElementById("comment-input-box") as HTMLTextAreaElement;
   const commentsContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
 
- 
-  const handleSubmitComment = async () => {
+  submitCommentElement.removeEventListener("click", handleSubmitComment);
+
+  async function handleSubmitComment() {
     if (!(await mustLoginMessage())) return;
     const formData = new FormData();
     const urlParams = new URLSearchParams(window.location.search);
@@ -32,7 +33,6 @@ export const handleComment = () => {
       setTimeout(async () => {
         const comments = await getComments(videoId);
         commentsContainerElement.innerHTML = CommentInfoCard(comments);
-        submitCommentElement.removeEventListener("click", handleSubmitComment);
         handleComment();
       }, 1000);
     } catch (error: any) {
@@ -43,7 +43,7 @@ export const handleComment = () => {
         commentMessageElement.innerHTML = "";
       }, 3000);
     }
-  };
+  }
 
   submitCommentElement.addEventListener("click", handleSubmitComment);
 
@@ -73,7 +73,6 @@ export const handleComment = () => {
   updateSubmitButtonState();
 };
 
-
 /**Comment deletion */
 export const handleCommentDeletion = () => {
   const commentDeleteModalElement = document.getElementById("comment-delete-modal") as HTMLDivElement;
@@ -81,12 +80,13 @@ export const handleCommentDeletion = () => {
   const deleteCommentOverylayElement = document.getElementById("delete-modal-overlay") as HTMLDivElement;
   const alterCommentContainerElement = document.getElementById("video-comment-container") as HTMLDivElement;
   const cancelCommentDeletionElement = document.getElementById("cancel-comment-deletion") as HTMLButtonElement;
-  
-  let currentCommentId: string | null = null;
 
-  const handleDeleteClick = async () => {
+  let currentCommentId: string | null = null;
+  confirmCommentDeleteElement.removeEventListener("click", handleDeleteClick);
+  async function handleDeleteClick() {
     if (currentCommentId) {
       try {
+        console.log({ currentCommentId });
         await deleteComment(currentCommentId);
         await reRenderComments();
         toggleDeletionModal();
@@ -94,7 +94,7 @@ export const handleCommentDeletion = () => {
         console.log(error);
       }
     }
-  };
+  }
 
   alterCommentContainerElement.addEventListener("click", (event) => {
     const commentItem = (event.target as HTMLElement).closest("#delete-comment");
@@ -114,10 +114,9 @@ export const handleCommentDeletion = () => {
   function toggleDeletionModal() {
     deleteCommentOverylayElement.classList.add("hidden");
     commentDeleteModalElement.classList.add("hidden");
-    currentCommentId = null; 
+    currentCommentId = null;
   }
 };
-
 
 /**Comment edition */
 export const handleCommentEdit = () => {
@@ -162,4 +161,6 @@ export const reRenderComments = async () => {
   const comments = await getComments(videoId);
   commentsContainerElement.innerHTML = CommentInfoCard(comments);
   handleComment();
+  handleCommentDeletion();
+  handleCommentEdit();
 };
