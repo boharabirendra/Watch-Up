@@ -1,6 +1,6 @@
 import { getUser } from "../../utils/getUser";
 import api from "../../utils/axiosInerceptor";
-import { isUserValid } from "../../utils/routeProtector";
+import { isUserLoggedIn } from "../../utils/routeProtector";
 import { DEFAULT_IMAGE_URL } from "../constants/constants";
 import { spinnerStart, spinnerStop } from "../../utils/common";
 
@@ -79,4 +79,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-await isUserValid();
+await isUserLoggedIn();

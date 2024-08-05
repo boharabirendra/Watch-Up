@@ -81,7 +81,6 @@ class VideoController {
     this.renderVideoGrid(this.filter);
     this.searchVideosByEnter();
     this.searchVideosUsingBtn();
-    window.addEventListener("popstate", () => this.loadFromUrl());
   }
 
   private loadFromUrl(): void {
@@ -194,6 +193,7 @@ class VideoController {
   }
   private searchVideosByEnter() {
     this.videoSearchElement.addEventListener("keydown", async (event) => {
+      this.hasMoreData = true;
       if (event.key === "Enter") {
         this.filterVideos();
       }

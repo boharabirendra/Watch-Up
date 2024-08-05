@@ -1,5 +1,5 @@
 import api from "../../utils/axiosInerceptor";
-import { isUserValid } from "../../utils/routeProtector";
+import { isUserLoggedIn } from "../../utils/routeProtector";
 
 document.addEventListener("DOMContentLoaded", () => {
   const newPasswordElement = document.getElementById("new-password") as HTMLInputElement;
@@ -40,4 +40,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-await isUserValid();
+await isUserLoggedIn();

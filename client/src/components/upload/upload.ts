@@ -1,5 +1,5 @@
 import api from "../../utils/axiosInerceptor";
-import { isUserValid } from "../../utils/routeProtector";
+import { isUserLoggedIn } from "../../utils/routeProtector";
 import { spinnerStart, spinnerStop } from "../../utils/common";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -52,4 +52,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-await isUserValid();
+await isUserLoggedIn();
