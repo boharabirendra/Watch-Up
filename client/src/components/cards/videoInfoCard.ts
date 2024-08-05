@@ -7,7 +7,7 @@ import { VideoDescriptionCard } from "./videoDescriptionCard";
 export const VideoInfoCard = (video: IVideo) => `
         <div class="mt-4">
           <div><h1 class="text-xl font-semibold">${video.title}</h1></div>
-          <div class="min-w-12 mt-2 flex gap-4">
+          <div class="min-w-12 mt-2 flex gap-4 flex-col md:flex-row">
             <div>
               <img
                 src="${video.user.profileUrl || DEFAULT_IMAGE_URL}"
@@ -15,7 +15,7 @@ export const VideoInfoCard = (video: IVideo) => `
                 alt="user"
               />
             </div>
-            <div class="flex gap-4 items-center">
+            <div class="flex gap-4 items-center flex-col md:flex-row">
               <div>
                 <p>@${video.user.fullName}</p>
                 <div class="flex gap-3 text-sm text-gray-400">

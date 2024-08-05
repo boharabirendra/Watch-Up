@@ -1,8 +1,7 @@
 import { getUser } from "../../utils/getUser";
 import api from "../../utils/axiosInerceptor";
-
+import { isUserValid } from "../../utils/routeProtector";
 import { DEFAULT_IMAGE_URL } from "../constants/constants";
-
 import { spinnerStart, spinnerStop } from "../../utils/common";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -80,12 +79,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-
-async function isUserValid() {
-  const user = await getUser();
-  if (!user) {
-    location.href = "../login/login.html";
-  }
-}
-
-isUserValid();
+await isUserValid();

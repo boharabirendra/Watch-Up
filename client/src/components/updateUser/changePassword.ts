@@ -1,5 +1,5 @@
 import api from "../../utils/axiosInerceptor";
-import { getUser } from "../../utils/getUser";
+import { isUserValid } from "../../utils/routeProtector";
 
 document.addEventListener("DOMContentLoaded", () => {
   const newPasswordElement = document.getElementById("new-password") as HTMLInputElement;
@@ -40,12 +40,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-
-async function isUserValid() {
-  const user = await getUser();
-  if (!user) {
-    location.href = "../login/login.html";
-  }
-}
-
-isUserValid();
+await isUserValid();

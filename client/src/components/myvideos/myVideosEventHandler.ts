@@ -1,7 +1,7 @@
 import { SIZE } from "../../constants/constants";
-import { spinnerStart, spinnerStop } from "../../utils/common";
-import { getUser } from "../../utils/getUser";
 import { MyVideoCard } from "../cards/myvideosCard";
+import { isUserValid } from "../../utils/routeProtector";
+import { spinnerStart, spinnerStop } from "../../utils/common";
 import { myVideoSkeletonHTML } from "../cards/videoCardSkeleton";
 import { deleteVideoById, editVideoDetails, fetchVideoById, getMyVideos, publishVideo, unpublishVideo } from "./myvideos";
 
@@ -176,12 +176,4 @@ async function editVideoDetail(editVideoElement: HTMLButtonElement) {
   });
 }
 
-
-async function isUserValid() {
-  const user = await getUser();
-  if (!user) {
-    location.href = "../login/login.html";
-  }
-}
-
-isUserValid();
+await isUserValid();
