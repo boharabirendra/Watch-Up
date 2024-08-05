@@ -138,6 +138,16 @@ export const handleCommentEdit = () => {
           const commentEditTextAreaElement = document.getElementById("edit-comment-input-box") as HTMLTextAreaElement;
           commentEditTextAreaElement.focus();
 
+          commentEditTextAreaElement.addEventListener("input", () => {
+            if (commentEditTextAreaElement.value.trim() === "") {
+              commentSaveElement.disabled = true;
+              commentSaveElement.classList.add("opacity-50", "cursor-not-allowed");
+            } else {
+              commentSaveElement.disabled = false;
+              commentSaveElement.classList.remove("opacity-50", "cursor-not-allowed");
+            }
+          });
+
           cancelCommentEditElement.addEventListener("click", () => {
             reRenderComments();
           });
