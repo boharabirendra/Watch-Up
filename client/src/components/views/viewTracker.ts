@@ -12,7 +12,7 @@ export class ViewTracker {
 
   startTracking() {
     if (this.timer === null) {
-      this.timer = window.setTimeout(() => this.recordView(), this.viewThreshold);
+      this.timer = setTimeout(() => this.recordView(), this.viewThreshold);
     }
   }
 

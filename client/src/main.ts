@@ -14,12 +14,13 @@ import { throttle } from "./utils/throttle";
 import { generateSkeleton } from "./components/cards/videoCardSkeleton";
 import { logoutHandler, navbarHandler } from "./components/nav/navbarHandler";
 
-import { FilterVideoCard } from "./components/cards/filterVideoCard";
-import { handleComment, handleCommentDeletion, handleCommentEdit } from "./components/comments/commentHandler";
-import { fetchVideoById, fetchSuggestionVideos, generateFilterVideosHTML, fetchVideos } from "./components/videos/video";
 
 import { THROTTLING_TIME } from "./constants/constants";
 import { CurrentView } from "./components/constants/constants";
+
+import { FilterVideoCard } from "./components/cards/filterVideoCard";
+import { handleComment, handleCommentDeletion, handleCommentEdit } from "./components/comments/commentHandler";
+import { fetchVideoById, fetchSuggestionVideos, generateFilterVideosHTML, fetchVideos } from "./components/videos/video";
 
 class VideoController {
   private filter: string;

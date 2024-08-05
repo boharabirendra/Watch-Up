@@ -79,3 +79,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 });
+
+
+async function isUserValid() {
+  const user = await getUser();
+  if (!user) {
+    location.href = "../login/login.html";
+  }
+}
+
+isUserValid();

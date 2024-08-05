@@ -1,5 +1,6 @@
 import api from "../../utils/axiosInerceptor";
 import { spinnerStart, spinnerStop } from "../../utils/common";
+import { getUser } from "../../utils/getUser";
 
 document.addEventListener("DOMContentLoaded", () => {
   const uploadSpinnerEl = document.getElementById("upload-spinner") as HTMLSpanElement;
@@ -50,3 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+async function isUserValid() {
+  const user = await getUser();
+  if (!user) {
+    location.href = "../login/login.html";
+  }
+}
+
+isUserValid();
