@@ -3,7 +3,7 @@ export const CommentInputCard = () => `
     <div>
       <img
         src="${localStorage.getItem("profileUrl") || "./public/sample.jpeg"}"
-        class="h-10 w-10 rounded-full"
+        class="w-8 rounded-full"
         alt="user"
       />
     </div>

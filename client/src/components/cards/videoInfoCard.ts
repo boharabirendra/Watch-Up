@@ -7,15 +7,15 @@ import { VideoDescriptionCard } from "./videoDescriptionCard";
 export const VideoInfoCard = (video: IVideo) => `
         <div class="mt-4">
           <div><h1 class="text-xl font-semibold">${video.title}</h1></div>
-          <div class="min-w-12 mt-2 flex gap-4 flex-col md:flex-row">
+          <div class="min-w-12 mt-2 flex gap-4 md:flex-row">
             <div>
               <img
                 src="${video.user.profileUrl || DEFAULT_IMAGE_URL}"
-                class="h-12 w-12 rounded-full"
+                class="w-10 rounded-full"
                 alt="user"
               />
             </div>
-            <div class="flex gap-4 items-center flex-col md:flex-row">
+            <div class="flex gap-4 items-start flex-col md:flex-row">
               <div>
                 <p>@${video.user.fullName}</p>
                 <div class="flex gap-3 text-sm text-gray-400">
@@ -23,6 +23,7 @@ export const VideoInfoCard = (video: IVideo) => `
                   <p>${timeAndDateFormater(video.createdAt)}</p>
                 </div>
               </div>
+            <div class="flex gap-4">
              <div class="flex items-center gap-3">
                 <button id="likeButton" title="Add like" class="flex items-center px-6 py-3 bg-bglikebtn rounded-full transition duration-300">
                   <svg id="likeSvg" class="w-6 h-6 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -34,16 +35,17 @@ export const VideoInfoCard = (video: IVideo) => `
                 </button>
                 ${mustLoginMessageCard()}
               </div>
-            </div>
-            <div>
-               <button id="share-btn" title="Copy link" class="flex items-center px-6 py-3 bg-bglikebtn rounded-full transition duration-300 gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                </svg>
-                <span id="share-msg">Copy link</span>
-                </button>
-            </div>
+              <div>
+                <button id="share-btn" title="Copy link" class="flex items-center px-6 py-3 bg-bglikebtn rounded-full transition duration-300 gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"  stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                  </svg>
+                  <span id="share-msg">Copy link</span>
+                  </button>
+              </div>
+             </div>
+           </div>
           </div>
          ${VideoDescriptionCard(video.description)}
         </div>

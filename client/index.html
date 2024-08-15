@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./src/index.css" />
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
   </head>
-  <body class="bg-bodybgcolor text-white max-w-[76%] m-auto my-2 pb-80">
+  <body class="bg-bodybgcolor text-white p-2 md:max-w-[76%] m-auto md:my-2 pb-80">
     <!-- Navbar -->
     <nav class="text-white py-2 w-full z-50 shadow-sm">
       <div class="flex items-center justify-between">
@@ -17,13 +17,13 @@
               <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
             </svg>
           </button>
-          <a href="/" class="hidden md:flex  items-center">
+          <a href="/" class="md:flex items-center">
             <svg class="w-8 h-8 text-red-500 mr-1" viewBox="0 0 24 24" fill="currentColor">
               <path
                 d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C.488 3.45.029 5.804 0 12c.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0C23.512 20.55 23.971 18.196 24 12c-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 3.993L9 16z"
               />
             </svg>
-            <span class="text-xl font-bold">WatchUp</span>
+            <span class="hidden md:block text-xl font-bold">WatchUp</span>
           </a>
         </div>
         <!-- Search bar -->
@@ -145,14 +145,14 @@
     <!-- Video grid container -->
     <div id="content" class="mt-6">
       <div>
-        <div id="video-grid" class="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8 mt-4"></div>
+        <div id="video-grid" class="grid align-middle grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8 mt-4"></div>
       </div>
     </div>
     <!-- Filter video container -->
     <div id="filter-videos-container" class="flex flex-col gap-2 max-w-lg justify-center mx-auto"></div>
     <!-- Video player -->
     <div id="video-player" class="flex gap-8 justify-between">
-      <div id="video-player-container" class="basis-3/4">
+      <div id="video-player-container" class="md:basis-3/4 w-full">
         <video id="main-video" class="rounded-md w-full" controls autoplay></video>
         <div id="video-info-container"></div>
         <div id="video-comment-container"></div>
