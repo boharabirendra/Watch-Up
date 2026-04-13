@@ -1,8 +1,9 @@
+import { BASE_URL } from "../../constants/constants";
 import { IVideo } from "../../interface/videoCard";
 
 export const MyVideoCard = (video: IVideo) => `
   <div class="  bg-gray-800 rounded-lg shadow-lg overflow-hidden text-white border border-gray-700">
-    <a href="http://localhost:5173/?v=${video.videoPublicId}&videoId=${video.id}">
+    <a href="${BASE_URL}/?v=${video.videoPublicId}&videoId=${video.id}">
     <img src="${video.thumbnailUrl}" alt="Video Thumbnail" class="play-myvideo cursor-pointer w-full h-48 object-cover"/> </a>
     <div class="myvideo p-4">
       <h3 class="text-lg font-semibold mb-3 truncate">${video.title}</h3>

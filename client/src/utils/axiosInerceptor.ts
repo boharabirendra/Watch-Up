@@ -1,7 +1,9 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 
+import { BASE_URL } from "../constants/constants";
+
 const api: AxiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api/v1",
+  baseURL: `${BASE_URL}`,
 });
 
 const refreshToken = async (): Promise<string> => {
@@ -20,7 +22,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error: AxiosError) => Promise.reject(error)
+  (error: AxiosError) => Promise.reject(error),
 );
 
 api.interceptors.response.use(
@@ -40,7 +42,7 @@ api.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
